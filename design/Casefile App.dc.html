@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="tokens.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700&amp;family=Geist:wght@400;500;600&amp;family=DM+Mono:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;display=swap">
+<style>
+body{margin:0;background:var(--color-ink-50);-webkit-font-smoothing:antialiased}
+a{color:var(--color-blue-600);text-decoration:none}a:hover{color:var(--color-blue-700)}
+*{box-sizing:border-box}
+button,input,select,textarea{font-family:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,[tabindex]:focus-visible,a:focus-visible{outline:none;box-shadow:var(--shadow-focus)!important}
+@keyframes cfShimmer{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+@keyframes cfIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height:100vh;background:{{ stageBg }};display:flex;align-items:center;justify-content:center;font-family:var(--font-ui);color:var(--color-ink-700);font-size:var(--text-body);line-height:1.6">
+<div style="position:relative;width:{{ frameW }};height:{{ frameH }};border-radius:{{ frameR }};box-shadow:{{ frameShadow }};overflow:hidden;background:var(--color-ink-50);display:flex;flex-direction:column">
+
+<!-- SIGN IN -->
+<sc-if value="{{ isSignin }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Sign in" style="flex:1;min-height:0;display:flex;background:var(--color-ink-0)">
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;margin:calc(var(--spacing) * 3);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 10);display:flex;flex-direction:column;color:var(--color-ink-0);position:relative;overflow:hidden;background:var(--gradient-sky)">
+    <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:700 var(--text-h3)/1 var(--font-display)"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9a4 4 0 0 1 4-4h5.2c1 0 1.9.5 2.5 1.3L17 8h7a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" style="fill:var(--color-ink-0)"></path><rect x="9" y="14" width="14" height="2.6" rx="1.3" style="fill:var(--color-blue-600)"></rect><rect x="9" y="19.4" width="9" height="2.6" rx="1.3" style="fill:var(--color-blue-600);opacity:.55"></rect></svg>Casefile</div>
+    <div style="margin-top:auto;max-width:440px;display:flex;flex-direction:column;gap:calc(var(--spacing) * 4)">
+      <div style="font:600 var(--text-h1)/1.06 var(--font-display);letter-spacing:-.035em;text-wrap:balance">Spend your time on the clauses that matter.</div>
+      <div style="font:500 var(--text-lead)/1.5 var(--font-display);color:var(--color-fg-on-brand-muted)">Casefile does the first pass. You make the call.</div>
+    </div>
+    <div style="margin-top:calc(var(--spacing) * 10);max-width:340px;background:var(--color-ink-0);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 4) calc(var(--spacing) * 4);box-shadow:var(--shadow-float);display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);color:var(--color-ink-900)">
+      <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)"><span style="font:600 var(--text-lead)/1.3 var(--font-display)">Limitation of liability</span><span style="margin-left:auto;font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">§ 7.1</span><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-high-bg);color:var(--color-risk-high);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat"></span>High</span></div>
+      <div style="font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-600)">Your client’s liability is uncapped; the supplier’s is limited to 3 months of fees.</div>
+    </div>
+  </div>
+  </sc-if>
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:calc(var(--spacing) * 8) calc(var(--spacing) * 6);overflow:auto">
+    <form onSubmit="{{ submitAuth }}" style="width:100%;max-width:380px;display:flex;flex-direction:column;gap:calc(var(--spacing) * 4)">
+      <sc-if value="{{ isMobile }}"><div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:700 var(--text-h3)/1 var(--font-display);color:var(--color-ink-900);margin-bottom:calc(var(--spacing) * 3)"><svg width="28" height="28" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9a4 4 0 0 1 4-4h5.2c1 0 1.9.5 2.5 1.3L17 8h7a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" style="fill:var(--color-blue-600)"></path><rect x="9" y="14" width="14" height="2.6" rx="1.3" style="fill:var(--color-ink-0)"></rect><rect x="9" y="19.4" width="9" height="2.6" rx="1.3" style="fill:var(--color-ink-0);opacity:.55"></rect></svg>Casefile</div></sc-if>
+      <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><h1 style="margin:0;font:600 var(--text-title)/1.15 var(--font-display);color:var(--color-ink-900);letter-spacing:-.025em">{{ authTitle }}</h1><p style="margin:0;font:400 var(--text-ui)/1.5 var(--font-ui);color:var(--color-ink-500)">{{ authSub }}</p></div>
+      <button type="button" onClick="{{ submitAuth }}" style="height:42px;border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer;box-shadow:var(--shadow-1)" style-hover="background:var(--color-ink-50)">Continue with Google</button>
+      <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 3);font:400 var(--text-caption)/1 var(--font-ui);color:var(--color-fg-muted)"><span style="flex:1;height:1px;background:var(--color-ink-100)"></span>or<span style="flex:1;height:1px;background:var(--color-ink-100)"></span></div>
+      <sc-if value="{{ isSignup }}"><label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Full name</span><input value="Maya Okafor" readOnly style="height:42px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);outline:none"></label></sc-if>
+      <label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Work email</span><input type="email" value="maya@harlowlane.com" readOnly style="height:42px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);outline:none"></label>
+      <label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="display:flex;justify-content:space-between;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Password<a href="#forgot" style="font-weight:500">Forgot?</a></span><input type="password" value="casefile-demo" readOnly style="height:42px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);outline:none"></label>
+      <button type="submit" style="height:44px;border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-body)/1 var(--font-ui);cursor:pointer;box-shadow:var(--shadow-button)" style-hover="background:var(--color-blue-700)">{{ authCta }}</button>
+      <div style="font:400 var(--text-small)/1.4 var(--font-ui);color:var(--color-ink-500);text-align:center">{{ authSwitchText }} <button type="button" onClick="{{ toggleAuth }}" style="border:none;background:none;padding:0;color:var(--color-blue-600);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">{{ authSwitchCta }}</button></div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing) * 1);font:400 var(--text-caption)/1 var(--font-ui);color:var(--color-fg-muted);margin-top:calc(var(--spacing) * 2)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/lock.svg) center/contain no-repeat"></span>Secured by Clerk</div>
+    </form>
+  </div>
+</div>
+</sc-if>
+
+<!-- 404 / ERROR -->
+<sc-if value="{{ isFullPage }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="System page" style="flex:1;display:flex;align-items:center;justify-content:center;padding:calc(var(--spacing) * 6);background:var(--gradient-sky)">
+  <div style="width:100%;max-width:440px;background:var(--color-ink-0);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 8) calc(var(--spacing) * 8);box-shadow:var(--shadow-float);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--spacing) * 3)">
+    <span style="width:48px;height:48px;border-radius:var(--radius-lg);background:{{ sysIconBg }};color:{{ sysIconFg }};display:flex;align-items:center;justify-content:center"><span style="width:22px;height:22px;display:inline-block;background:currentColor;-webkit-mask-image:{{ sysIcon }};-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center"></span></span>
+    <div style="font:500 var(--text-small)/1 var(--font-mono);color:var(--color-ink-500)">{{ sysCode }}</div>
+    <h1 style="margin:0;font:600 var(--text-title)/1.15 var(--font-display);color:var(--color-ink-900);letter-spacing:-.02em">{{ sysTitle }}</h1>
+    <p style="margin:0;font:400 var(--text-ui)/1.55 var(--font-ui);color:var(--color-ink-600);max-width:320px">{{ sysBody }}</p>
+    <div style="display:flex;gap:calc(var(--spacing) * 2);margin-top:calc(var(--spacing) * 2);flex-wrap:wrap;justify-content:center">
+      <sc-if value="{{ isError }}"><button onClick="{{ retryError }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-blue-700)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/refresh-cw.svg) center/contain no-repeat"></span>Try again</button></sc-if>
+      <button onClick="{{ goMatters }}" style="height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)">Back to matters</button>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+
+<!-- APP SHELL -->
+<sc-if value="{{ isApp }}" hint-placeholder-val="{{ false }}">
+<div style="flex:1;min-height:0;display:flex;position:relative">
+  <sc-if value="{{ drawer }}"><div onClick="{{ closeDrawer }}" style="position:absolute;inset:0;background:var(--color-scrim);z-index:29"></div></sc-if>
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+  <aside style="position:{{ sbPos }};top:0;bottom:0;left:0;z-index:30;width:{{ sbWidth }};flex:none;background:var(--color-ink-25);border-right:1px solid var(--color-ink-100);display:flex;flex-direction:column;gap:calc(var(--spacing) * 1);padding:{{ sbPad }};transition:width 200ms;box-shadow:{{ sbShadow }}">
+    <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 2) calc(var(--spacing) * 3);font:700 var(--text-h3)/1 var(--font-display);color:var(--color-ink-900);letter-spacing:-.02em"><svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9a4 4 0 0 1 4-4h5.2c1 0 1.9.5 2.5 1.3L17 8h7a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z" style="fill:var(--color-blue-600)"></path><rect x="9" y="14" width="14" height="2.6" rx="1.3" style="fill:var(--color-ink-0)"></rect><rect x="9" y="19.4" width="9" height="2.6" rx="1.3" style="fill:var(--color-ink-0);opacity:.55"></rect></svg><sc-if value="{{ sbFull }}" hint-placeholder-val="{{ true }}">Casefile</sc-if></div>
+    <div style="position:relative;margin-bottom:calc(var(--spacing) * 2)">
+      <button onClick="{{ toggleOrgMenu }}" aria-haspopup="menu" aria-expanded="{{ orgMenu }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:1px solid var(--color-ink-100);background:var(--color-ink-0);border-radius:var(--radius-md);box-shadow:var(--shadow-1);cursor:pointer;text-align:left" style-hover="border-color:var(--color-ink-200)">
+        <span style="width:30px;height:30px;flex:none;border-radius:var(--radius-sm);background:var(--color-blue-600);color:var(--color-ink-0);font:600 var(--text-caption)/30px var(--font-ui);text-align:center">{{ orgIni }}</span>
+        <sc-if value="{{ sbFull }}" hint-placeholder-val="{{ true }}"><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1.2 var(--font-ui);color:var(--color-ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ orgName }}</span><span style="font:400 var(--text-caption)/1.2 var(--font-ui);color:var(--color-ink-500)">{{ orgSub }}</span></span>
+        <span style="width:14px;height:14px;flex:none;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevrons-up-down.svg) center/contain no-repeat"></span></sc-if>
+      </button>
+      <sc-if value="{{ orgMenu }}">
+        <div role="menu" style="position:absolute;top:calc(100% + calc(var(--spacing) * 1));left:0;min-width:236px;z-index:5;background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);padding:calc(var(--spacing) * 1);box-shadow:var(--shadow-3);animation:cfIn 160ms ease-out">
+          <div style="padding:calc(var(--spacing) * 1) calc(var(--spacing) * 2) calc(var(--spacing) * 1);font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500);letter-spacing:.05em;text-transform:uppercase">Organizations</div>
+          <sc-for list="{{ orgs }}" as="o"><button role="menuitem" onClick="{{ o.onClick }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;text-align:left" style-hover="background:var(--color-ink-50)"><span style="width:24px;height:24px;border-radius:var(--radius-xs);background:var(--color-blue-50);color:var(--color-blue-700);font:600 var(--text-caption)/24px var(--font-ui);text-align:center">{{ o.ini }}</span><span style="flex:1;font:500 var(--text-small)/1.2 var(--font-ui);color:var(--color-ink-900)">{{ o.name }}</span><sc-if value="{{ o.isCurrent }}"><span style="width:14px;height:14px;display:inline-block;background:var(--color-blue-600);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat"></span></sc-if></button></sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="3"><button onClick="{{ n.onClick }}" aria-label="{{ n.label }}" title="{{ n.label }}" style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 2);border:none;border-radius:var(--radius-md);background:{{ n.bg }};color:{{ n.color }};font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer;text-align:left" style-hover="background:var(--color-ink-100);color:var(--color-ink-900)"><span style="width:17px;height:17px;display:inline-block;background:currentColor;-webkit-mask-image:{{ n.mask }};-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center"></span><sc-if value="{{ sbFull }}" hint-placeholder-val="{{ true }}">{{ n.label }}</sc-if></button></sc-for>
+    </nav>
+    <div style="margin-top:auto;position:relative">
+      <sc-if value="{{ userMenu }}">
+        <div role="menu" style="position:absolute;bottom:calc(100% + calc(var(--spacing) * 1));left:0;min-width:236px;z-index:5;background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);padding:calc(var(--spacing) * 1);box-shadow:var(--shadow-3);animation:cfIn 160ms ease-out">
+          <div style="padding:calc(var(--spacing) * 2) calc(var(--spacing) * 2) calc(var(--spacing) * 2);border-bottom:1px solid var(--color-ink-100);margin-bottom:calc(var(--spacing) * 1)"><div style="font:500 var(--text-small)/1.3 var(--font-ui);color:var(--color-ink-900)">{{ meName }}</div><div style="font:400 var(--text-caption)/1.3 var(--font-ui);color:var(--color-ink-500)">{{ meEmail }}</div></div>
+          <div style="padding:calc(var(--spacing) * 1) calc(var(--spacing) * 2) calc(var(--spacing) * 1);font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500);letter-spacing:.05em;text-transform:uppercase">Preview states</div>
+          <button role="menuitem" onClick="{{ demoSession }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800);text-align:left" style-hover="background:var(--color-ink-50)"><span style="width:15px;height:15px;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/timer-off.svg) center/contain no-repeat"></span>Session expired</button>
+          <button role="menuitem" onClick="{{ demo404 }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800);text-align:left" style-hover="background:var(--color-ink-50)"><span style="width:15px;height:15px;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/file-question.svg) center/contain no-repeat"></span>404 page</button>
+          <button role="menuitem" onClick="{{ demoError }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800);text-align:left" style-hover="background:var(--color-ink-50)"><span style="width:15px;height:15px;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/cloud-off.svg) center/contain no-repeat"></span>Error page</button>
+          <div style="height:1px;background:var(--color-ink-100);margin:calc(var(--spacing) * 1) 0"></div>
+          <button role="menuitem" onClick="{{ signOut }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:none;background:transparent;border-radius:var(--radius-sm);cursor:pointer;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-risk-high);text-align:left" style-hover="background:var(--color-risk-high-bg)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/log-out.svg) center/contain no-repeat"></span>Sign out</button>
+        </div>
+      </sc-if>
+      <button onClick="{{ toggleUserMenu }}" aria-haspopup="menu" aria-expanded="{{ userMenu }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2);border:none;background:transparent;border-radius:var(--radius-md);cursor:pointer;text-align:left" style-hover="background:var(--color-ink-100)">
+        <span style="width:32px;height:32px;flex:none;border-radius:var(--radius-pill);background:var(--color-blue-100);color:var(--color-blue-700);font:600 var(--text-caption)/32px var(--font-ui);text-align:center">MO</span>
+        <sc-if value="{{ sbFull }}" hint-placeholder-val="{{ true }}"><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1.2 var(--font-ui);color:var(--color-ink-900)">{{ meName }}</span><span style="font:400 var(--text-caption)/1.2 var(--font-ui);color:var(--color-ink-500);overflow:hidden;text-overflow:ellipsis">{{ meEmail }}</span></span>
+        <span style="width:14px;height:14px;flex:none;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/ellipsis.svg) center/contain no-repeat"></span></sc-if>
+      </button>
+    </div>
+  </aside>
+  </sc-if>
+
+  <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+    <div style="height:60px;flex:none;display:flex;align-items:center;gap:calc(var(--spacing) * 3);padding:0 calc(var(--spacing) * 4) 0 calc(var(--spacing) * 5);background:var(--color-ink-0);border-bottom:1px solid var(--color-ink-100)">
+      <sc-if value="{{ isMobile }}"><button onClick="{{ openDrawer }}" aria-label="Open menu" style="width:40px;height:40px;margin-left:calc(var(--spacing) * -2);border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-ink-800);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:20px;height:20px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/menu.svg) center/contain no-repeat"></span></button></sc-if>
+      <label style="flex:1;max-width:440px;display:flex;align-items:center;gap:calc(var(--spacing) * 2);height:38px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-pill);background:var(--color-ink-50);border:1px solid var(--color-ink-100);color:var(--color-ink-500)">
+        <span style="width:15px;height:15px;flex:none;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/search.svg) center/contain no-repeat"></span>
+        <input value="{{ q }}" onChange="{{ onSearch }}" aria-label="Search matters and clients" placeholder="Search matters and clients…" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);box-shadow:none">
+        <sc-if value="{{ isDesktop }}"><span style="font:500 var(--text-caption)/1 var(--font-mono);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 1);border-radius:var(--radius-xs);background:var(--color-ink-0);border:1px solid var(--color-ink-200);color:var(--color-ink-600)">⌘K</span></sc-if>
+      </label>
+    </div>
+    <main data-main="1" style="flex:1;min-height:0;overflow:{{ contentOverflow }};position:relative">
+
+<!-- MATTERS LIST -->
+<sc-if value="{{ isMatters }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="Matters" style="max-width:1240px;margin:0 auto;padding:{{ pagePad }};display:flex;flex-direction:column;gap:calc(var(--spacing) * 5);animation:cfIn 220ms ease-out">
+  <div style="display:flex;align-items:flex-end;gap:calc(var(--spacing) * 4);flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1);margin-right:auto"><h1 style="margin:0;font:600 var(--text-title)/1.15 var(--font-display);color:var(--color-ink-900);letter-spacing:-.025em">Matters</h1><span style="font:400 var(--text-ui)/1.4 var(--font-ui);color:var(--color-ink-500)">{{ orgMatterCount }} matters in {{ orgName }}</span></div>
+    <button onClick="{{ openNew }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer;box-shadow:var(--shadow-button)" style-hover="background:var(--color-blue-700)"><span style="width:16px;height:16px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/plus.svg) center/contain no-repeat"></span>New matter</button>
+  </div>
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);flex-wrap:wrap">
+    <div role="group" aria-label="Status" style="display:flex;gap:calc(var(--spacing) * 1);flex-wrap:wrap">
+      <sc-for list="{{ statusChips }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onClick }}" aria-pressed="{{ c.active }}" style="height:32px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-pill);border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">{{ c.label }}</button></sc-for>
+    </div>
+    <label style="position:relative;display:flex;align-items:center">
+      <select value="{{ fArea }}" onChange="{{ onArea }}" aria-label="Practice area" style="appearance:none;-webkit-appearance:none;height:32px;padding:0 calc(var(--spacing) * 8) 0 calc(var(--spacing) * 3);border-radius:var(--radius-pill);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-700);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer;outline:none">
+        <option value="All">All practice areas</option><option value="Commercial">Commercial</option><option value="Employment">Employment</option><option value="Real estate">Real estate</option><option value="Technology">Technology</option><option value="Corporate">Corporate</option><option value="Privacy">Privacy</option>
+      </select>
+      <span style="position:absolute;right:calc(var(--spacing) * 3);width:13px;height:13px;pointer-events:none;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevron-down.svg) center/contain no-repeat"></span>
+    </label>
+    <sc-if value="{{ hasFilters }}"><button onClick="{{ clearFilters }}" style="height:32px;padding:0 calc(var(--spacing) * 2);border:none;background:transparent;color:var(--color-blue-600);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">Clear filters</button></sc-if>
+  </div>
+  </sc-if>
+  <sc-if value="{{ isMobile }}">
+  <div style="display:flex;gap:calc(var(--spacing) * 2);align-items:center">
+    <button onClick="{{ openFilterSheet }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:38px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/sliders-horizontal.svg) center/contain no-repeat"></span>Filters<sc-if value="{{ hasActiveFilterCount }}"><span style="min-width:18px;height:18px;border-radius:var(--radius-pill);background:var(--color-blue-600);color:var(--color-ink-0);font:600 var(--text-caption)/18px var(--font-ui);text-align:center">{{ activeFilterCount }}</span></sc-if></button>
+    <span style="margin-left:auto;font:400 var(--text-small)/1 var(--font-ui);color:var(--color-ink-500)">{{ resultCount }} results</span>
+  </div>
+  </sc-if>
+
+  <div style="background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);overflow:hidden">
+    <sc-if value="{{ listError }}">
+      <div role="alert" style="padding:calc(var(--spacing) * 12) calc(var(--spacing) * 6);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--spacing) * 2)"><span style="width:44px;height:44px;border-radius:var(--radius-lg);background:var(--color-risk-high-bg);color:var(--color-risk-high);display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/cloud-off.svg) center/contain no-repeat"></span></span><div style="font:600 var(--text-h3)/1.3 var(--font-display);color:var(--color-ink-900)">Couldn’t load matters</div><div style="font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-500)">Check your connection and try again. <span style="font-family:var(--font-mono)">Ref CF-4M1A-02</span></div><button onClick="{{ retryList }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:36px;padding:0 calc(var(--spacing) * 3);margin-top:calc(var(--spacing) * 1);border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/refresh-cw.svg) center/contain no-repeat"></span>Retry</button></div>
+    </sc-if>
+    <sc-if value="{{ listLoadingView }}">
+      <div aria-busy="true" aria-label="Loading matters" style="display:flex;flex-direction:column">
+        <sc-for list="{{ skeletons }}" as="k"><div style="display:flex;gap:calc(var(--spacing) * 4);align-items:center;padding:calc(var(--spacing) * 4) calc(var(--spacing) * 5);border-bottom:1px solid var(--color-ink-100);animation:cfShimmer 1.2s ease-in-out infinite"><span style="width:28%;height:12px;border-radius:var(--radius-xs);background:var(--color-ink-100)"></span><span style="width:16%;height:12px;border-radius:var(--radius-xs);background:var(--color-ink-100)"></span><span style="width:12%;height:12px;border-radius:var(--radius-xs);background:var(--color-ink-100)"></span><span style="width:10%;height:20px;border-radius:var(--radius-pill);background:var(--color-ink-100)"></span></div></sc-for>
+      </div>
+    </sc-if>
+    <sc-if value="{{ listEmpty }}">
+      <div style="padding:calc(var(--spacing) * 12) calc(var(--spacing) * 6);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--spacing) * 2)"><span style="width:44px;height:44px;border-radius:var(--radius-lg);background:var(--color-blue-50);color:var(--color-blue-600);display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/search-x.svg) center/contain no-repeat"></span></span><div style="font:600 var(--text-h3)/1.3 var(--font-display);color:var(--color-ink-900)">No matters match your filters</div><div style="font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-500)">Try a different search, or clear the filters to see everything.</div><button onClick="{{ clearFilters }}" style="height:36px;padding:0 calc(var(--spacing) * 3);margin-top:calc(var(--spacing) * 1);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)">Clear filters</button></div>
+    </sc-if>
+    <sc-if value="{{ listReady }}" hint-placeholder-val="{{ true }}">
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <div style="overflow-x:auto"><div role="table" aria-label="Matters" style="min-width:900px">
+        <div role="row" style="display:grid;grid-template-columns:minmax(220px,2.3fr) 1.4fr 1.1fr 1fr 64px 1fr 1.1fr;gap:calc(var(--spacing) * 3);padding:0 calc(var(--spacing) * 5);background:var(--color-ink-25);border-bottom:1px solid var(--color-ink-100)">
+          <sc-for list="{{ cols }}" as="h" hint-placeholder-count="7"><button role="columnheader" aria-sort="{{ h.aria }}" onClick="{{ h.onClick }}" style="display:flex;align-items:center;gap:calc(var(--spacing) * 1);height:40px;padding:0;border:none;background:none;color:{{ h.color }};font:500 var(--text-caption)/1 var(--font-ui);cursor:pointer;text-align:left">{{ h.label }}<sc-if value="{{ h.isUp }}"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-up.svg) center/contain no-repeat"></span></sc-if><sc-if value="{{ h.isDown }}"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-down.svg) center/contain no-repeat"></span></sc-if></button></sc-for>
+        </div>
+        <sc-for list="{{ matterRows }}" as="m" hint-placeholder-count="6">
+          <div role="row" tabindex="0" onClick="{{ m.onClick }}" style="display:grid;grid-template-columns:minmax(220px,2.3fr) 1.4fr 1.1fr 1fr 64px 1fr 1.1fr;gap:calc(var(--spacing) * 3);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);align-items:center;border-bottom:1px solid var(--color-ink-100);font:400 var(--text-ui)/1.3 var(--font-ui);color:var(--color-ink-700);cursor:pointer" style-hover="background:var(--color-ink-25)">
+            <span style="font-weight:500;color:var(--color-ink-900)">{{ m.name }}</span><span>{{ m.client }}</span><span>{{ m.area }}</span>
+            <span>
+              <sc-if value="{{ m.isOpen }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:24px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-blue-200);background:var(--color-blue-50);color:var(--color-blue-700);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);background:currentColor"></span>Open</span></sc-if>
+              <sc-if value="{{ m.isReview }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:24px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-risk-med-border);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);border:1.5px solid currentColor"></span>In review</span></sc-if>
+              <sc-if value="{{ m.isClosed }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:24px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-ink-200);background:var(--color-ink-50);color:var(--color-ink-600);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/lock.svg) center/contain no-repeat"></span>Closed</span></sc-if>
+            </span>
+            <span style="font:500 var(--text-small)/1 var(--font-mono)">{{ m.docs }}</span><span style="color:var(--color-ink-500)">{{ m.lastLabel }}</span>
+            <span style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)"><span style="width:24px;height:24px;flex:none;border-radius:var(--radius-pill);background:{{ m.ownerBg }};color:{{ m.ownerFg }};font:600 var(--text-caption)/24px var(--font-ui);text-align:center">{{ m.ownerIni }}</span>{{ m.ownerName }}</span>
+          </div>
+        </sc-for>
+      </div></div>
+      </sc-if>
+      <sc-if value="{{ isMobile }}">
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ matterRows }}" as="m"><button onClick="{{ m.onClick }}" style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 4);border:none;border-bottom:1px solid var(--color-ink-100);background:var(--color-ink-0);text-align:left;cursor:pointer">
+            <span style="display:flex;align-items:flex-start;gap:calc(var(--spacing) * 2)"><span style="flex:1;font:600 var(--text-body)/1.3 var(--font-display);color:var(--color-ink-900)">{{ m.name }}</span>
+              <sc-if value="{{ m.isOpen }}"><span style="flex:none;display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-blue-200);background:var(--color-blue-50);color:var(--color-blue-700);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);background:currentColor"></span>Open</span></sc-if>
+              <sc-if value="{{ m.isReview }}"><span style="flex:none;display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-risk-med-border);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);border:1.5px solid currentColor"></span>In review</span></sc-if>
+              <sc-if value="{{ m.isClosed }}"><span style="flex:none;display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-ink-200);background:var(--color-ink-50);color:var(--color-ink-600);font:500 var(--text-caption)/1 var(--font-ui)">Closed</span></sc-if>
+            </span>
+            <span style="font:400 var(--text-small)/1.3 var(--font-ui);color:var(--color-ink-600)">{{ m.client }} · {{ m.area }}</span>
+            <span style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:400 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500)"><span style="width:20px;height:20px;border-radius:var(--radius-pill);background:{{ m.ownerBg }};color:{{ m.ownerFg }};font:600 var(--text-caption)/20px var(--font-ui);text-align:center">{{ m.ownerIni }}</span>{{ m.docs }} docs · {{ m.lastLabel }}</span>
+          </button></sc-for>
+        </div>
+      </sc-if>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:calc(var(--spacing) * 3);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);font:400 var(--text-small)/1 var(--font-ui);color:var(--color-ink-500)">
+        <span>{{ rangeLabel }}</span>
+        <span style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)"><span>{{ pageLabel }}</span>
+          <button onClick="{{ prevPage }}" aria-label="Previous page" style="width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:{{ prevColor }};display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevron-left.svg) center/contain no-repeat"></span></button>
+          <button onClick="{{ nextPage }}" aria-label="Next page" style="width:32px;height:32px;border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:{{ nextColor }};display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevron-right.svg) center/contain no-repeat"></span></button>
+        </span>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+<!-- MATTER DETAIL -->
+<sc-if value="{{ isMatter }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Matter detail" style="max-width:1240px;margin:0 auto;padding:{{ pagePad }};display:flex;flex-direction:column;gap:calc(var(--spacing) * 5);animation:cfIn 220ms ease-out">
+  <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-500)"><button onClick="{{ goMattersList }}" style="border:none;background:none;padding:0;color:var(--color-ink-500);font:inherit;cursor:pointer" style-hover="color:var(--color-ink-900)">Matters</button><span style="color:var(--color-ink-300)">/</span><span style="color:var(--color-ink-900);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ matterName }}</span></nav>
+  <div style="background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 6);box-shadow:var(--shadow-2);display:flex;gap:calc(var(--spacing) * 4);align-items:flex-start;flex-wrap:wrap">
+    <div style="flex:1;min-width:240px;display:flex;flex-direction:column;gap:calc(var(--spacing) * 3)">
+      <h1 style="margin:0;font:600 var(--text-title)/1.15 var(--font-display);color:var(--color-ink-900);letter-spacing:-.025em;text-wrap:balance">{{ matterName }}</h1>
+      <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2) calc(var(--spacing) * 4);flex-wrap:wrap;font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-600)">
+        <span style="display:flex;align-items:center;gap:calc(var(--spacing) * 1)"><span style="width:15px;height:15px;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/building-2.svg) center/contain no-repeat"></span>{{ matterClient }}</span>
+        <span style="display:flex;align-items:center;gap:calc(var(--spacing) * 1)"><span style="width:15px;height:15px;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/scale.svg) center/contain no-repeat"></span>{{ matterArea }}</span>
+        <sc-if value="{{ mIsOpen }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:24px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-blue-200);background:var(--color-blue-50);color:var(--color-blue-700);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);background:currentColor"></span>Open</span></sc-if>
+        <sc-if value="{{ mIsReview }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:24px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-risk-med-border);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);border:1.5px solid currentColor"></span>In review</span></sc-if>
+        <sc-if value="{{ mIsClosed }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:24px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid var(--color-ink-200);background:var(--color-ink-50);color:var(--color-ink-600);font:500 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/lock.svg) center/contain no-repeat"></span>Closed</span></sc-if>
+        <span style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)"><span style="width:22px;height:22px;border-radius:var(--radius-pill);background:{{ matterOwnerBg }};color:{{ matterOwnerFg }};font:600 var(--text-caption)/22px var(--font-ui);text-align:center">{{ matterOwnerIni }}</span>{{ matterOwner }}</span>
+      </div>
+    </div>
+    <button onClick="{{ openEdit }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:38px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer;box-shadow:var(--shadow-1)" style-hover="background:var(--color-ink-50)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/pencil.svg) center/contain no-repeat"></span>Edit</button>
+  </div>
+
+  <div role="tablist" style="align-self:flex-start;display:flex;gap:calc(var(--spacing) * 1);padding:calc(var(--spacing) * 1);border-radius:var(--radius-md);background:var(--color-ink-100)">
+    <button role="tab" aria-selected="{{ isDocsTab }}" onClick="{{ showDocsTab }}" style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);height:34px;padding:0 calc(var(--spacing) * 3);border:none;border-radius:var(--radius-sm);background:{{ docsTabBg }};color:{{ docsTabColor }};box-shadow:{{ docsTabShadow }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">Documents<span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">{{ docCount }}</span></button>
+    <button role="tab" aria-selected="{{ isActivityTab }}" onClick="{{ showActivityTab }}" style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);height:34px;padding:0 calc(var(--spacing) * 3);border:none;border-radius:var(--radius-sm);background:{{ actTabBg }};color:{{ actTabColor }};box-shadow:{{ actTabShadow }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">Activity<span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">{{ actCount }}</span></button>
+  </div>
+  <input type="file" ref="{{ fileRef }}" onChange="{{ onFile }}" accept=".pdf,.doc,.docx" multiple style="display:none">
+
+  <sc-if value="{{ isDocsTab }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ noDocs }}">
+      <div onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" style="border:1.5px dashed {{ dropBorder }};background:{{ dropBg }};border-radius:var(--radius-xl);padding:calc(var(--spacing) * 16) calc(var(--spacing) * 6);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--spacing) * 3);transition:background 200ms, border-color 200ms">
+        <span style="width:52px;height:52px;border-radius:var(--radius-lg);background:var(--color-blue-600);color:var(--color-ink-0);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-brand-glow)"><span style="width:22px;height:22px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/upload.svg) center/contain no-repeat"></span></span>
+        <div style="font:600 var(--text-h3)/1.25 var(--font-display);color:var(--color-ink-900)">No documents yet</div>
+        <div style="font:400 var(--text-ui)/1.5 var(--font-ui);color:var(--color-ink-600);max-width:360px">Drop a contract here to start. Casefile will find the clauses and mark the risky ones.</div>
+        <button onClick="{{ pickFile }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:40px;padding:0 calc(var(--spacing) * 4);margin-top:calc(var(--spacing) * 1);border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-blue-700)">Upload contract</button>
+        <div style="font:400 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500)">PDF or Word, up to 200 MB</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasDocs }}" hint-placeholder-val="{{ true }}">
+      <div onDragOver="{{ onDragOver }}" onDragLeave="{{ onDragLeave }}" onDrop="{{ onDrop }}" style="border:1.5px dashed {{ dropBorder }};background:{{ dropBg }};border-radius:var(--radius-lg);padding:calc(var(--spacing) * 4) calc(var(--spacing) * 4);display:flex;align-items:center;gap:calc(var(--spacing) * 3);flex-wrap:wrap;transition:background 200ms, border-color 200ms">
+        <span style="width:40px;height:40px;flex:none;border-radius:var(--radius-md);background:var(--color-blue-600);color:var(--color-ink-0);display:flex;align-items:center;justify-content:center"><span style="width:18px;height:18px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/upload.svg) center/contain no-repeat"></span></span>
+        <div style="flex:1;min-width:180px"><div style="font:600 var(--text-body)/1.3 var(--font-display);color:var(--color-ink-900)">Drop a contract here</div><div style="font:400 var(--text-caption)/1.4 var(--font-ui);color:var(--color-ink-500)">PDF or Word, up to 200 MB</div></div>
+        <button onClick="{{ pickFile }}" style="height:36px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)">Upload contract</button>
+      </div>
+      <div style="background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);overflow-x:auto"><div style="min-width:{{ docMinW }}">
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}"><div style="display:grid;grid-template-columns:{{ docGrid }};gap:calc(var(--spacing) * 4);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);background:var(--color-ink-25);border-bottom:1px solid var(--color-ink-100);font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500)"><span>Document</span><span>Uploaded by</span><span>Analysis</span><span></span></div></sc-if>
+        <sc-for list="{{ mdocs }}" as="d" hint-placeholder-count="3">
+          <div onClick="{{ d.onRow }}" style="display:grid;grid-template-columns:{{ docGrid }};gap:calc(var(--spacing) * 3) calc(var(--spacing) * 4);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);align-items:center;border-bottom:1px solid var(--color-ink-100);cursor:{{ d.rowCursor }};animation:cfIn 240ms ease-out" style-hover="background:var(--color-ink-25)">
+            <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 3);min-width:0"><span style="width:36px;height:36px;flex:none;border-radius:var(--radius-md);background:var(--color-ink-50);color:var(--color-ink-600);display:flex;align-items:center;justify-content:center"><span style="width:17px;height:17px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/file-text.svg) center/contain no-repeat"></span></span><span style="min-width:0;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-ui)/1.3 var(--font-ui);color:var(--color-ink-900);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.name }}</span><span style="font:400 var(--text-caption)/1.3 var(--font-ui);color:var(--color-ink-500)">{{ d.meta }}</span></span></div>
+            <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:400 var(--text-small)/1.3 var(--font-ui);color:var(--color-ink-600)"><span style="width:22px;height:22px;flex:none;border-radius:var(--radius-pill);background:{{ d.byBg }};color:{{ d.byFg }};font:600 var(--text-caption)/22px var(--font-ui);text-align:center">{{ d.byIni }}</span><span style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span>{{ d.byName }}</span><span style="font-size:var(--text-caption);color:var(--color-ink-500)">{{ d.when }}</span></span></div>
+            <div>
+              <sc-if value="{{ d.isUploading }}"><div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="display:flex;justify-content:space-between;font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-600)">Uploading<span style="font-family:var(--font-mono)">{{ d.pct }}</span></span><span style="height:5px;border-radius:var(--radius-pill);background:var(--color-ink-100);overflow:hidden"><span style="display:block;height:100%;width:{{ d.pct }};background:var(--color-ink-500);border-radius:var(--radius-pill);transition:width 300ms"></span></span></div></sc-if>
+              <sc-if value="{{ d.isAnalysing }}"><div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="display:flex;justify-content:space-between;font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-blue-600)"><span style="display:flex;align-items:center;gap:calc(var(--spacing) * 1)"><span style="width:6px;height:6px;border-radius:var(--radius-pill);background:currentColor;animation:cfShimmer 1.2s infinite"></span>Analysing</span><span style="font-family:var(--font-mono)">{{ d.pct }}</span></span><span style="height:5px;border-radius:var(--radius-pill);background:var(--color-blue-100);overflow:hidden"><span style="display:block;height:100%;width:{{ d.pct }};background:var(--color-blue-600);border-radius:var(--radius-pill);transition:width 300ms"></span></span></div></sc-if>
+              <sc-if value="{{ d.isReady }}"><div style="display:flex;gap:calc(var(--spacing) * 1);flex-wrap:wrap" aria-label="Analysis ready">
+                <span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-high-bg);color:var(--color-risk-high);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat"></span>{{ d.h }} high</span>
+                <span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat"></span>{{ d.m }} med</span>
+                <span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-low-bg);color:var(--color-risk-low);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/shield-check.svg) center/contain no-repeat"></span>{{ d.l }} low</span>
+              </div></sc-if>
+              <sc-if value="{{ d.isFailed }}"><div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)"><span style="display:flex;align-items:center;gap:calc(var(--spacing) * 1);font:500 var(--text-small)/1 var(--font-ui);color:var(--color-risk-high)"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-x.svg) center/contain no-repeat"></span>Analysis failed</span><button onClick="{{ d.onRetry }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:28px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-caption)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/refresh-cw.svg) center/contain no-repeat"></span>Retry</button></div></sc-if>
+            </div>
+            <div style="display:flex;gap:calc(var(--spacing) * 1);justify-content:flex-end">
+              <sc-if value="{{ d.isReady }}"><button onClick="{{ d.onOpen }}" aria-label="Open review" style="width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-blue-600);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--color-blue-50)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-right.svg) center/contain no-repeat"></span></button></sc-if>
+              <button onClick="{{ d.onRemove }}" aria-label="Remove document" style="width:34px;height:34px;border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-500);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--color-risk-high-bg);color:var(--color-risk-high)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/trash-2.svg) center/contain no-repeat"></span></button>
+            </div>
+          </div>
+        </sc-for>
+      </div></div>
+    </sc-if>
+  </sc-if>
+
+  <sc-if value="{{ isActivityTab }}">
+    <div style="background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);padding:calc(var(--spacing) * 6);box-shadow:var(--shadow-2)">
+      <ol style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column">
+        <sc-for list="{{ acts }}" as="a" hint-placeholder-count="4">
+          <li style="display:grid;grid-template-columns:32px 1fr;gap:calc(var(--spacing) * 3)">
+            <div style="display:flex;flex-direction:column;align-items:center"><span style="width:32px;height:32px;flex:none;border-radius:var(--radius-pill);background:{{ a.bg }};color:{{ a.fg }};display:flex;align-items:center;justify-content:center"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask-image:{{ a.mask }};-webkit-mask-size:contain;-webkit-mask-repeat:no-repeat;-webkit-mask-position:center"></span></span><sc-if value="{{ a.notLast }}"><span style="flex:1;width:1px;min-height:14px;background:var(--color-ink-100)"></span></sc-if></div>
+            <div style="padding:calc(var(--spacing) * 1) 0 calc(var(--spacing) * 4)"><div style="font:400 var(--text-ui)/1.45 var(--font-ui);color:var(--color-ink-700)"><b style="font-weight:500;color:var(--color-ink-900)">{{ a.who }}</b> {{ a.text }}</div><div style="font:400 var(--text-caption)/1.4 var(--font-ui);color:var(--color-ink-500)">{{ a.when }}</div></div>
+          </li>
+        </sc-for>
+      </ol>
+    </div>
+  </sc-if>
+</div>
+</sc-if>
+
+<!-- DOCUMENTS -->
+<sc-if value="{{ isDocuments }}">
+<div data-screen-label="Documents" style="max-width:1240px;margin:0 auto;padding:{{ pagePad }};display:flex;flex-direction:column;gap:calc(var(--spacing) * 5);animation:cfIn 220ms ease-out">
+  <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><h1 style="margin:0;font:600 var(--text-title)/1.15 var(--font-display);color:var(--color-ink-900);letter-spacing:-.025em">Documents</h1><span style="font:400 var(--text-ui)/1.4 var(--font-ui);color:var(--color-ink-500)">Every contract across {{ orgName }}</span></div>
+  <div style="background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);overflow:hidden">
+    <sc-for list="{{ orgDocs }}" as="d" hint-placeholder-count="5">
+      <button onClick="{{ d.onClick }}" style="width:100%;display:flex;align-items:center;gap:calc(var(--spacing) * 3);flex-wrap:wrap;padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);border:none;border-bottom:1px solid var(--color-ink-100);background:var(--color-ink-0);text-align:left;cursor:pointer" style-hover="background:var(--color-ink-25)">
+        <span style="width:36px;height:36px;flex:none;border-radius:var(--radius-md);background:var(--color-ink-50);color:var(--color-ink-600);display:flex;align-items:center;justify-content:center"><span style="width:17px;height:17px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/file-text.svg) center/contain no-repeat"></span></span>
+        <span style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-ui)/1.3 var(--font-ui);color:var(--color-ink-900)">{{ d.name }}</span><span style="font:400 var(--text-caption)/1.3 var(--font-ui);color:var(--color-ink-500)">{{ d.matter }} · {{ d.meta }} · {{ d.when }}</span></span>
+        <sc-if value="{{ d.isReady }}"><span style="display:flex;gap:calc(var(--spacing) * 1)"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-high-bg);color:var(--color-risk-high);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat"></span>{{ d.h }}</span><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat"></span>{{ d.m }}</span><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-low-bg);color:var(--color-risk-low);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:11px;height:11px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/shield-check.svg) center/contain no-repeat"></span>{{ d.l }}</span></span></sc-if>
+        <sc-if value="{{ d.isBusy }}"><span style="font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-blue-600)">Analysing · {{ d.pct }}</span></sc-if>
+        <sc-if value="{{ d.isFailed }}"><span style="font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-risk-high)">Analysis failed</span></sc-if>
+      </button>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- SETTINGS -->
+<sc-if value="{{ isSettings }}">
+<div data-screen-label="Settings" style="max-width:860px;margin:0 auto;padding:{{ pagePad }};display:flex;flex-direction:column;gap:calc(var(--spacing) * 5);animation:cfIn 220ms ease-out">
+  <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><h1 style="margin:0;font:600 var(--text-title)/1.15 var(--font-display);color:var(--color-ink-900);letter-spacing:-.025em">Settings</h1><span style="font:400 var(--text-ui)/1.4 var(--font-ui);color:var(--color-ink-500)">{{ orgName }}</span></div>
+  <div style="background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-2);overflow:hidden">
+    <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 3);padding:calc(var(--spacing) * 4) calc(var(--spacing) * 5);border-bottom:1px solid var(--color-ink-100)"><div style="flex:1;font:600 var(--text-lead)/1.3 var(--font-display);color:var(--color-ink-900)">Members</div><button onClick="{{ invite }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 2);height:34px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/user-plus.svg) center/contain no-repeat"></span>Invite</button></div>
+    <sc-for list="{{ members }}" as="p" hint-placeholder-count="3"><div style="display:flex;align-items:center;gap:calc(var(--spacing) * 3);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);border-bottom:1px solid var(--color-ink-100)"><span style="width:32px;height:32px;flex:none;border-radius:var(--radius-pill);background:{{ p.bg }};color:{{ p.fg }};font:600 var(--text-caption)/32px var(--font-ui);text-align:center">{{ p.ini }}</span><span style="flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-ui)/1.3 var(--font-ui);color:var(--color-ink-900)">{{ p.name }}</span><span style="font:400 var(--text-caption)/1.3 var(--font-ui);color:var(--color-ink-500)">{{ p.email }}</span></span><span style="font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-600);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 2);border-radius:var(--radius-pill);background:var(--color-ink-50)">{{ p.role }}</span></div></sc-for>
+  </div>
+</div>
+</sc-if>
+
+<!-- DOCUMENT REVIEW -->
+<sc-if value="{{ isReview }}">
+<div data-screen-label="Document review" style="position:absolute;inset:0;display:flex;flex-direction:column;background:var(--color-ink-0)">
+  <sc-if value="{{ isMobile }}">
+  <header style="flex:none;display:flex;flex-direction:column;gap:calc(var(--spacing) * 3);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 4);border-bottom:1px solid var(--color-ink-100)">
+    <div style="display:flex;align-items:flex-start;gap:calc(var(--spacing) * 3)">
+      <button onClick="{{ backToMatter }}" aria-label="Back to matter" style="width:44px;height:44px;flex:none;border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-700);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:18px;height:18px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-left.svg) center/contain no-repeat"></span></button>
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1);padding-top:calc(var(--spacing) * 1)">
+        <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:calc(var(--spacing) * 1);min-width:0;font:500 var(--text-caption)/1.3 var(--font-ui);color:var(--color-fg-muted)"><span style="width:12px;height:12px;flex:none;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/briefcase.svg) center/contain no-repeat"></span><span style="min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ matterName }}</span></nav>
+        <h1 style="margin:0;font:600 var(--text-lead)/1.3 var(--font-display);color:var(--color-ink-900);letter-spacing:-.01em;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere">{{ rdocName }}</h1>
+      </div>
+      <sc-if value="{{ reviewReady }}"><button onClick="{{ openMobileAsk }}" aria-label="Ask about this document" style="flex:none;display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:44px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-pill);border:none;background:var(--color-blue-50);color:var(--color-blue-700);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/sparkles.svg) center/contain no-repeat"></span>Ask</button></sc-if>
+    </div>
+    <sc-if value="{{ reviewReady }}">
+      <div role="progressbar" aria-label="Review progress" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ reviewed }}" style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2)">
+        <div style="display:flex;justify-content:space-between;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)"><span>{{ reviewed }} of {{ total }} clauses reviewed</span><span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-fg-muted)">{{ pctLabel }}</span></div>
+        <div style="height:6px;border-radius:var(--radius-pill);background:var(--color-ink-100);overflow:hidden"><div style="height:100%;border-radius:var(--radius-pill);background:var(--color-blue-600);width:{{ pctLabel }};transition:width 360ms cubic-bezier(.22,.8,.24,1)"></div></div>
+      </div>
+    </sc-if>
+  </header>
+  </sc-if>
+  <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:none;display:flex;align-items:center;gap:calc(var(--spacing) * 4);flex-wrap:wrap;padding:calc(var(--spacing) * 3) calc(var(--spacing) * 5);border-bottom:1px solid var(--color-ink-100)">
+    <button onClick="{{ backToMatter }}" aria-label="Back to matter" style="width:36px;height:36px;flex:none;border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-700);display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:var(--color-ink-50)"><span style="width:16px;height:16px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-left.svg) center/contain no-repeat"></span></button>
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><div style="font:500 var(--text-caption)/1.2 var(--font-ui);color:var(--color-ink-500);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ matterName }}</div><div style="font:600 var(--text-h3)/1.2 var(--font-display);color:var(--color-ink-900);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ rdocName }}</div></div>
+    <sc-if value="{{ reviewReady }}" hint-placeholder-val="{{ true }}">
+      <div role="progressbar" aria-label="Review progress" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="{{ reviewed }}" style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);width:230px;max-width:100%">
+        <div style="display:flex;justify-content:space-between;font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)"><span>{{ reviewed }} of {{ total }} clauses reviewed</span><span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">{{ pctLabel }}</span></div>
+        <div style="height:6px;border-radius:var(--radius-pill);background:var(--color-ink-100);overflow:hidden"><div style="height:100%;border-radius:var(--radius-pill);background:var(--color-blue-600);width:{{ pctLabel }};transition:width 360ms cubic-bezier(.22,.8,.24,1)"></div></div>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ reviewWaiting }}">
+    <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:calc(var(--spacing) * 6);background:var(--color-ink-50)">
+      <div style="width:100%;max-width:440px;background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 6);box-shadow:var(--shadow-2);display:flex;flex-direction:column;gap:calc(var(--spacing) * 3)" aria-live="polite">
+        <sc-if value="{{ rdocBusy }}">
+          <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:500 var(--text-small)/1 var(--font-ui);color:var(--color-blue-600)"><span style="width:7px;height:7px;border-radius:var(--radius-pill);background:var(--color-blue-600);animation:cfShimmer 1.2s infinite"></span>Analysing</div>
+          <div style="font:600 var(--text-h3)/1.25 var(--font-display);color:var(--color-ink-900)">Casefile is reading this document</div>
+          <div style="font:400 var(--text-ui)/1.55 var(--font-ui);color:var(--color-ink-600)">Clauses will appear here as soon as the first pass is done. You can leave this page — we’ll let you know.</div>
+          <div style="height:6px;border-radius:var(--radius-pill);background:var(--color-blue-100);overflow:hidden"><div style="height:100%;width:{{ rdocPct }};background:var(--color-blue-600);border-radius:var(--radius-pill);transition:width 300ms"></div></div>
+          <div style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-blue-600)">{{ rdocPct }}</div>
+        </sc-if>
+        <sc-if value="{{ rdocFailed }}">
+          <div style="font:600 var(--text-h3)/1.25 var(--font-display);color:var(--color-ink-900)">We couldn’t analyse this document</div>
+          <div style="font:400 var(--text-ui)/1.55 var(--font-ui);color:var(--color-ink-600)">Go back to the matter to retry the analysis.</div>
+        </sc-if>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ reviewReady }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:0;display:flex;position:relative">
+    <div ref="{{ docRef }}" style="position:relative;flex:1;min-width:0;overflow:auto;background:var(--color-ink-50);padding:{{ docPad }}">
+      <div style="max-width:700px;margin:0 auto;background:var(--color-ink-0);border:1px solid var(--color-border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-1);padding:{{ paperPad }}">
+        <div style="font:500 var(--text-caption)/1.4 var(--font-mono);color:var(--color-ink-500);letter-spacing:.08em;text-transform:uppercase">Between Brightline Packaging Ltd and {{ matterClient }}</div>
+        <h2 style="margin:calc(var(--spacing) * 2) 0 calc(var(--spacing) * 6);font:500 var(--text-title)/1.2 var(--font-document);color:var(--color-ink-900)">Master Services Agreement</h2>
+        <sc-for list="{{ sections }}" as="s" hint-placeholder-count="8">
+          <sc-if value="{{ s.isHeading }}"><h3 style="margin:calc(var(--spacing) * 5) 0 calc(var(--spacing) * 1);font:600 var(--text-small)/1.3 var(--font-ui);color:var(--color-ink-900);letter-spacing:.02em">{{ s.title }}</h3></sc-if>
+          <sc-if value="{{ s.isPara }}"><div data-sec="{{ s.n }}" onClick="{{ s.onClick }}" style="display:grid;grid-template-columns:40px 1fr;gap:calc(var(--spacing) * 1);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 3);margin:0 calc(var(--spacing) * -3) calc(var(--spacing) * 1);border-radius:var(--radius-sm);background:{{ s.bg }};box-shadow:{{ s.ring }};cursor:{{ s.cursor }};transition:background 200ms, box-shadow 200ms"><span style="font:500 var(--text-caption)/28px var(--font-mono);color:var(--color-ink-500)">{{ s.n }}</span><p style="margin:0;font:400 var(--text-lead)/1.7 var(--font-document);color:var(--color-ink-800);text-wrap:pretty">{{ s.text }}</p></div></sc-if>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ showRightPanel }}" hint-placeholder-val="{{ true }}">
+    <div style="position:{{ rpPos }};top:0;right:0;bottom:0;z-index:20;width:{{ rpWidth }};flex:none;border-left:1px solid var(--color-ink-100);display:flex;flex-direction:column;background:var(--color-ink-0)">
+      <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+      <div role="tablist" style="flex:none;display:flex;gap:calc(var(--spacing) * 1);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 3);border-bottom:1px solid var(--color-ink-100)">
+        <button role="tab" aria-selected="{{ isClausesTab }}" onClick="{{ showClauses }}" style="flex:1;height:34px;border:none;border-radius:var(--radius-md);background:{{ clausesTabBg }};color:{{ clausesTabColor }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing) * 2)">Clauses<span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">{{ total }}</span></button>
+        <button role="tab" aria-selected="{{ isAskTab }}" onClick="{{ showAsk }}" style="flex:1;height:34px;border:none;border-radius:var(--radius-md);background:{{ askTabBg }};color:{{ askTabColor }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing) * 2)"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/sparkles.svg) center/contain no-repeat"></span>Ask about this document</button>
+      </div>
+      </sc-if>
+      <sc-if value="{{ isMobile }}">
+      <div style="flex:none;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 3);border-bottom:1px solid var(--color-ink-100)"><span style="width:16px;height:16px;display:inline-block;background:var(--color-blue-600);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/sparkles.svg) center/contain no-repeat"></span><span style="flex:1;font:600 var(--text-lead)/1.2 var(--font-display);color:var(--color-ink-900)">Ask about this document</span><button onClick="{{ closeMobileAsk }}" aria-label="Close" style="width:36px;height:36px;border-radius:var(--radius-md);border:none;background:var(--color-ink-50);color:var(--color-ink-700);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:16px;height:16px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/x.svg) center/contain no-repeat"></span></button></div>
+      </sc-if>
+
+      <sc-if value="{{ isClausesTab }}" hint-placeholder-val="{{ true }}">
+        <div style="flex:none;display:flex;gap:calc(var(--spacing) * 1);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 3) calc(var(--spacing) * 1);flex-wrap:wrap">
+          <sc-for list="{{ filters }}" as="f" hint-placeholder-count="5"><button onClick="{{ f.onClick }}" aria-pressed="{{ f.active }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:28px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-pill);border:1px solid {{ f.border }};background:{{ f.bg }};color:{{ f.color }};font:500 var(--text-caption)/1 var(--font-ui);cursor:pointer">{{ f.label }}<span style="font:500 var(--text-caption)/1 var(--font-mono);opacity:.7">{{ f.count }}</span></button></sc-for>
+        </div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:calc(var(--spacing) * 2) calc(var(--spacing) * 3) calc(var(--spacing) * 4);display:flex;flex-direction:column;gap:calc(var(--spacing) * 2)">
+          <sc-if value="{{ noClauses }}"><div style="padding:calc(var(--spacing) * 10) calc(var(--spacing) * 4);text-align:center;font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-500)">Nothing here — every clause in this filter is reviewed.</div></sc-if>
+          <sc-for list="{{ clauses }}" as="c" hint-placeholder-count="5">
+            <div onClick="{{ c.onSelect }}" tabindex="0" style="flex:none;background:{{ c.bg }};border:1px solid {{ c.border }};box-shadow:{{ c.ring }};border-radius:var(--radius-lg);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 3);cursor:pointer;display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);transition:box-shadow 200ms, border-color 200ms">
+              <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)">
+                <sc-if value="{{ c.isAccepted }}"><span role="img" aria-label="Accepted" style="width:16px;height:16px;flex:none;display:inline-block;background:var(--color-risk-low);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat"></span></sc-if>
+                <sc-if value="{{ c.isFlagged }}"><span role="img" aria-label="Flagged" style="width:15px;height:15px;flex:none;display:inline-block;background:var(--color-risk-med);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/flag.svg) center/contain no-repeat"></span></sc-if>
+                <span style="font:600 var(--text-body)/1.3 var(--font-display);color:{{ c.titleColor }}">{{ c.type }}</span>
+                <span style="margin-left:auto;font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">§ {{ c.sec }}</span>
+                <sc-if value="{{ c.isHigh }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-high-bg);color:var(--color-risk-high);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat"></span>High</span></sc-if>
+                <sc-if value="{{ c.isMed }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat"></span>Medium</span></sc-if>
+                <sc-if value="{{ c.isLow }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-low-bg);color:var(--color-risk-low);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/shield-check.svg) center/contain no-repeat"></span>Low</span></sc-if>
+              </div>
+              <sc-if value="{{ c.showWhy }}"><p style="margin:0;font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-600)">{{ c.why }}</p></sc-if>
+              <sc-if value="{{ c.showFlagNote }}"><div style="font:400 var(--text-caption)/1.45 var(--font-ui);color:var(--color-risk-med-strong);background:var(--color-risk-med-bg);border-radius:var(--radius-sm);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 2)">{{ c.note }}</div></sc-if>
+              <sc-if value="{{ c.expanded }}">
+                <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);padding-top:calc(var(--spacing) * 1)">
+                  <p style="margin:0;font:400 var(--text-small)/1.55 var(--font-ui);color:var(--color-ink-700)">{{ c.detail }}</p>
+                  <div style="background:var(--color-ink-25);border:1px solid var(--color-ink-100);border-radius:var(--radius-md);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 3);display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-blue-600);letter-spacing:.05em;text-transform:uppercase">Suggested revision</span><p style="margin:0;font:400 var(--text-ui)/1.6 var(--font-document);color:var(--color-ink-800)">{{ c.revision }}</p></div>
+                  <sc-if value="{{ c.noteOpen }}"><label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)" onClick="{{ stop }}"><span style="font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-800)">Why does this need attention?</span><textarea value="{{ c.note }}" onChange="{{ c.onNote }}" onClick="{{ stop }}" placeholder="e.g. Client won’t accept uncapped liability — push for 12 months’ fees" style="min-height:64px;resize:vertical;border:1px solid var(--color-ink-200);border-radius:var(--radius-md);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 2);font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-900);outline:none"></textarea></label></sc-if>
+                  <div style="display:flex;gap:calc(var(--spacing) * 2)">
+                    <button onClick="{{ c.onAccept }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:32px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-sm);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer;box-shadow:var(--shadow-button)" style-hover="background:var(--color-blue-700)"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat"></span>{{ c.acceptLabel }}</button>
+                    <button onClick="{{ c.onFlag }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:32px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/flag.svg) center/contain no-repeat"></span>{{ c.flagLabel }}</button>
+                  </div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ showShortcuts }}"><div style="flex:none;display:flex;gap:calc(var(--spacing) * 3);justify-content:center;padding:calc(var(--spacing) * 2);border-top:1px solid var(--color-ink-100);font:400 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500)"><span><b style="font:500 var(--text-caption)/1 var(--font-mono);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 1);border:1px solid var(--color-ink-200);border-radius:var(--radius-xs);color:var(--color-ink-700)">j</b> <b style="font:500 var(--text-caption)/1 var(--font-mono);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 1);border:1px solid var(--color-ink-200);border-radius:var(--radius-xs);color:var(--color-ink-700)">k</b> move</span><span><b style="font:500 var(--text-caption)/1 var(--font-mono);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 1);border:1px solid var(--color-ink-200);border-radius:var(--radius-xs);color:var(--color-ink-700)">a</b> accept</span><span><b style="font:500 var(--text-caption)/1 var(--font-mono);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 1);border:1px solid var(--color-ink-200);border-radius:var(--radius-xs);color:var(--color-ink-700)">f</b> flag</span></div></sc-if>
+      </sc-if>
+
+      <sc-if value="{{ isAskTab }}">
+        <div style="flex:1;min-height:0;overflow:auto;padding:calc(var(--spacing) * 4);display:flex;flex-direction:column;gap:calc(var(--spacing) * 3)">
+          <sc-if value="{{ noQuestion }}">
+            <div style="margin:auto 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--spacing) * 2);padding:0 calc(var(--spacing) * 2)">
+              <span style="width:44px;height:44px;border-radius:var(--radius-lg);background:linear-gradient(180deg,var(--color-blue-500),var(--color-blue-600));color:var(--color-ink-0);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-brand-glow)"><span style="width:20px;height:20px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/sparkles.svg) center/contain no-repeat"></span></span>
+              <div style="font:600 var(--text-h3)/1.3 var(--font-display);color:var(--color-ink-900)">Ask about this document</div>
+              <div style="font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-500);max-width:280px">Every answer links back to the exact section it comes from.</div>
+              <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);width:100%;margin-top:calc(var(--spacing) * 2)">
+                <sc-for list="{{ suggestions }}" as="q" hint-placeholder-count="3"><button onClick="{{ q.onClick }}" style="display:flex;align-items:center;justify-content:space-between;gap:calc(var(--spacing) * 2);text-align:left;padding:calc(var(--spacing) * 3) calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-border-subtle);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-small)/1.35 var(--font-ui);cursor:pointer;box-shadow:var(--shadow-1)" style-hover="border-color:var(--color-blue-300);background:var(--color-blue-25)">{{ q.text }}<span style="width:14px;height:14px;flex:none;display:inline-block;background:var(--color-blue-600);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-right.svg) center/contain no-repeat"></span></button></sc-for>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ hasQuestion }}">
+            <div style="align-self:flex-end;max-width:85%;background:var(--color-blue-50);color:var(--color-blue-800);font:500 var(--text-small)/1.45 var(--font-ui);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 3);border-radius:var(--radius-lg) var(--radius-lg) var(--radius-xs) var(--radius-lg)">{{ question }}</div>
+            <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2)">
+              <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-blue-600)"><span style="width:14px;height:14px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/sparkles.svg) center/contain no-repeat"></span>Casefile</div>
+              <p aria-live="polite" style="margin:0;font:400 var(--text-ui)/1.65 var(--font-ui);color:var(--color-ink-800)"><sc-for list="{{ tokens }}" as="t"><sc-if value="{{ t.isText }}"><span>{{ t.w }}</span></sc-if><sc-if value="{{ t.isCite }}"><button onMouseEnter="{{ t.onEnter }}" onMouseLeave="{{ t.onLeave }}" onFocus="{{ t.onEnter }}" onBlur="{{ t.onLeave }}" onClick="{{ t.onClick }}" aria-label="Citation {{ t.n }}, section {{ t.sec }}" style="display:inline-flex;align-items:center;justify-content:center;min-width:19px;height:19px;padding:0 calc(var(--spacing) * 1);margin:0 calc(var(--spacing) * 1) 0 calc(var(--spacing) * 1);vertical-align:1px;border-radius:var(--radius-xs);border:none;background:var(--color-blue-100);color:var(--color-blue-700);font:500 var(--text-caption)/1 var(--font-mono);cursor:pointer" style-hover="background:var(--color-blue-600);color:var(--color-ink-0)">{{ t.n }}</button></sc-if></sc-for><sc-if value="{{ streaming }}"><span style="display:inline-block;width:7px;height:15px;background:var(--color-blue-600);border-radius:var(--radius-xs);vertical-align:-2px;margin-left:calc(var(--spacing) * 1);animation:cfShimmer .9s infinite"></span></sc-if></p>
+              <sc-if value="{{ askError }}"><div role="alert" style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-risk-high-border);background:var(--color-risk-high-bg)"><span style="width:15px;height:15px;flex:none;display:inline-block;background:var(--color-risk-high);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-x.svg) center/contain no-repeat"></span><span style="flex:1;font:400 var(--text-small)/1.4 var(--font-ui);color:var(--color-ink-800)">The answer was interrupted. <span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">CF-A7K2-11</span></span><button onClick="{{ retryAsk }}" style="border:none;background:none;color:var(--color-blue-600);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">Retry</button></div></sc-if>
+              <sc-if value="{{ answerDone }}">
+                <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><sc-for list="{{ sources }}" as="src"><button onClick="{{ src.onClick }}" onMouseEnter="{{ src.onEnter }}" onMouseLeave="{{ src.onLeave }}" onFocus="{{ src.onEnter }}" onBlur="{{ src.onLeave }}" style="display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 2);border-radius:var(--radius-md);border:1px solid var(--color-ink-100);background:var(--color-ink-25);cursor:pointer;text-align:left" style-hover="border-color:var(--color-blue-200)"><span style="min-width:19px;height:19px;border-radius:var(--radius-xs);background:var(--color-blue-100);color:var(--color-blue-700);font:500 var(--text-caption)/19px var(--font-mono);text-align:center">{{ src.n }}</span><span style="font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">§ {{ src.sec }}</span><span style="font:500 var(--text-small)/1.3 var(--font-ui);color:var(--color-ink-800)">{{ src.title }}</span></button></sc-for></div>
+                <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)">
+                  <button onClick="{{ copy }}" style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:28px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-sm);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-700);font:500 var(--text-caption)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-50)"><span style="width:13px;height:13px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/copy.svg) center/contain no-repeat"></span>{{ copyLabel }}</button>
+                  <button onClick="{{ resetAsk }}" style="height:28px;padding:0 calc(var(--spacing) * 2);border-radius:var(--radius-sm);border:none;background:transparent;color:var(--color-ink-600);font:500 var(--text-caption)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-ink-100)">New question</button>
+                </div>
+                <div style="display:flex;gap:calc(var(--spacing) * 2);align-items:flex-start;font:400 var(--text-caption)/1.45 var(--font-ui);color:var(--color-ink-500)"><span style="width:13px;height:13px;margin-top:calc(var(--spacing) * 1);flex:none;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/info.svg) center/contain no-repeat"></span>AI can make mistakes. Check this answer against the cited sections before relying on it.</div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+        <form onSubmit="{{ submitAsk }}" style="flex:none;margin:0 calc(var(--spacing) * 3) calc(var(--spacing) * 3);display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 1) calc(var(--spacing) * 1) calc(var(--spacing) * 1) calc(var(--spacing) * 3);border-radius:var(--radius-lg);border:1px solid var(--color-ink-200);background:var(--color-ink-0);box-shadow:var(--shadow-1)">
+          <input value="{{ draft }}" onChange="{{ onDraft }}" aria-label="Ask a question" placeholder="Ask about this contract…" style="flex:1;min-width:0;border:none;outline:none;font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);background:transparent;box-shadow:none">
+          <button type="submit" aria-label="Send" style="width:32px;height:32px;flex:none;border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/arrow-up.svg) center/contain no-repeat"></span></button>
+        </form>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ mSheet }}">
+      <div role="region" aria-label="Current clause" style="position:absolute;left:0;right:0;bottom:0;z-index:15;background:var(--color-ink-0);border-radius:var(--radius-xl) var(--radius-xl) 0 0;box-shadow:var(--shadow-sheet);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 4) calc(var(--spacing) * 4);display:flex;flex-direction:column;gap:calc(var(--spacing) * 2)">
+        <span style="align-self:center;width:36px;height:4px;border-radius:var(--radius-pill);background:var(--color-ink-200)"></span>
+        <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)">
+          <sc-if value="{{ cur.isAccepted }}"><span role="img" aria-label="Accepted" style="width:16px;height:16px;flex:none;display:inline-block;background:var(--color-risk-low);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat"></span></sc-if>
+          <sc-if value="{{ cur.isFlagged }}"><span role="img" aria-label="Flagged" style="width:15px;height:15px;flex:none;display:inline-block;background:var(--color-risk-med);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/flag.svg) center/contain no-repeat"></span></sc-if>
+          <span style="font:600 var(--text-lead)/1.3 var(--font-display);color:var(--color-ink-900)">{{ cur.type }}</span>
+          <span style="margin-left:auto;font:500 var(--text-caption)/1 var(--font-mono);color:var(--color-ink-500)">§ {{ cur.sec }}</span>
+          <sc-if value="{{ cur.isHigh }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-high-bg);color:var(--color-risk-high);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/triangle-alert.svg) center/contain no-repeat"></span>High</span></sc-if>
+          <sc-if value="{{ cur.isMed }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-med-bg);color:var(--color-risk-med);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat"></span>Medium</span></sc-if>
+          <sc-if value="{{ cur.isLow }}"><span style="display:inline-flex;align-items:center;gap:calc(var(--spacing) * 1);height:22px;padding:0 calc(var(--spacing) * 2) 0 calc(var(--spacing) * 1);border-radius:var(--radius-pill);background:var(--color-risk-low-bg);color:var(--color-risk-low);font:600 var(--text-caption)/1 var(--font-ui)"><span style="width:12px;height:12px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/shield-check.svg) center/contain no-repeat"></span>Low</span></sc-if>
+        </div>
+        <p style="margin:0;font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-600)">{{ cur.why }}</p>
+        <sc-if value="{{ cur.noteOpen }}"><textarea value="{{ cur.note }}" onChange="{{ cur.onNote }}" aria-label="Flag note" placeholder="Why does this need attention?" style="min-height:56px;resize:none;border:1px solid var(--color-ink-200);border-radius:var(--radius-md);padding:calc(var(--spacing) * 2) calc(var(--spacing) * 2);font:400 var(--text-small)/1.5 var(--font-ui);color:var(--color-ink-900);outline:none"></textarea></sc-if>
+        <div style="display:flex;align-items:center;gap:calc(var(--spacing) * 2)">
+          <button onClick="{{ prevClause }}" aria-label="Previous clause" style="width:44px;height:44px;flex:none;border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-700);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:16px;height:16px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevron-left.svg) center/contain no-repeat"></span></button>
+          <button onClick="{{ cur.onAccept }}" style="flex:1;height:44px;border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing) * 1)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/check.svg) center/contain no-repeat"></span>{{ cur.acceptLabel }}</button>
+          <button onClick="{{ cur.onFlag }}" style="flex:1;height:44px;border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:calc(var(--spacing) * 1)"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/flag.svg) center/contain no-repeat"></span>{{ cur.flagLabel }}</button>
+          <button onClick="{{ nextClause }}" aria-label="Next clause" style="width:44px;height:44px;flex:none;border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-700);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:16px;height:16px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevron-right.svg) center/contain no-repeat"></span></button>
+        </div>
+        <div style="text-align:center;font:400 var(--text-caption)/1 var(--font-ui);color:var(--color-ink-500)">Clause {{ curPos }}</div>
+      </div>
+    </sc-if>
+  </div>
+  </sc-if>
+</div>
+</sc-if>
+
+    </main>
+  </div>
+</div>
+</sc-if>
+
+<!-- OVERLAYS -->
+<sc-if value="{{ filterSheet }}">
+  <div onClick="{{ closeFilterSheet }}" style="position:absolute;inset:0;z-index:40;background:var(--color-scrim);display:flex;align-items:flex-end">
+    <div role="dialog" aria-label="Filters" onClick="{{ stopProp }}" style="width:100%;background:var(--color-ink-0);border-radius:var(--radius-xl) var(--radius-xl) 0 0;padding:calc(var(--spacing) * 3) calc(var(--spacing) * 4) calc(var(--spacing) * 5);display:flex;flex-direction:column;gap:calc(var(--spacing) * 4);animation:cfIn 220ms ease-out">
+      <span style="align-self:center;width:36px;height:4px;border-radius:var(--radius-pill);background:var(--color-ink-200)"></span>
+      <div style="display:flex;align-items:center"><span style="flex:1;font:600 var(--text-h3)/1.2 var(--font-display);color:var(--color-ink-900)">Filters</span><button onClick="{{ clearFilters }}" style="border:none;background:none;color:var(--color-blue-600);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer">Clear</button></div>
+      <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Status</span><div style="display:flex;gap:calc(var(--spacing) * 1);flex-wrap:wrap"><sc-for list="{{ statusChips }}" as="c"><button onClick="{{ c.onClick }}" aria-pressed="{{ c.active }}" style="height:36px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-pill);border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">{{ c.label }}</button></sc-for></div></div>
+      <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 2)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Practice area</span><div style="display:flex;gap:calc(var(--spacing) * 1);flex-wrap:wrap"><sc-for list="{{ areaChips }}" as="c"><button onClick="{{ c.onClick }}" aria-pressed="{{ c.active }}" style="height:36px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-pill);border:1px solid {{ c.border }};background:{{ c.bg }};color:{{ c.color }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">{{ c.label }}</button></sc-for></div></div>
+      <button onClick="{{ closeFilterSheet }}" style="height:48px;border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-body)/1 var(--font-ui);cursor:pointer">Show {{ resultCount }} matters</button>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasForm }}">
+  <div style="position:absolute;inset:0;z-index:50;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:calc(var(--spacing) * 4)">
+    <form role="dialog" aria-modal="true" aria-label="{{ formTitle }}" onSubmit="{{ saveForm }}" style="width:100%;max-width:480px;background:var(--color-ink-0);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 6);box-shadow:var(--shadow-3);display:flex;flex-direction:column;gap:calc(var(--spacing) * 4);animation:cfIn 200ms ease-out">
+      <div style="display:flex;align-items:center"><span style="flex:1;font:600 var(--text-h3)/1.2 var(--font-display);color:var(--color-ink-900)">{{ formTitle }}</span><button type="button" onClick="{{ closeForm }}" aria-label="Close" style="width:34px;height:34px;border-radius:var(--radius-md);border:none;background:var(--color-ink-50);color:var(--color-ink-700);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:15px;height:15px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/x.svg) center/contain no-repeat"></span></button></div>
+      <label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Matter name</span><input value="{{ fName }}" onChange="{{ onFName }}" placeholder="e.g. Acme Ltd – Supplier agreement" style="height:42px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid {{ fNameBorder }};font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);outline:none"><sc-if value="{{ hasNameErr }}"><span role="alert" style="display:flex;align-items:center;gap:calc(var(--spacing) * 1);font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-risk-high)"><span style="width:13px;height:13px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat"></span>{{ fNameErr }}</span></sc-if></label>
+      <label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Client</span><input value="{{ fClient }}" onChange="{{ onFClient }}" placeholder="e.g. Acme Ltd" style="height:42px;padding:0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid {{ fClientBorder }};font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);outline:none"><sc-if value="{{ hasClientErr }}"><span role="alert" style="display:flex;align-items:center;gap:calc(var(--spacing) * 1);font:500 var(--text-caption)/1 var(--font-ui);color:var(--color-risk-high)"><span style="width:13px;height:13px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-alert.svg) center/contain no-repeat"></span>{{ fClientErr }}</span></sc-if></label>
+      <label style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1);position:relative"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Practice area</span><select value="{{ fAreaVal }}" onChange="{{ onFArea }}" style="appearance:none;-webkit-appearance:none;height:42px;padding:0 calc(var(--spacing) * 8) 0 calc(var(--spacing) * 3);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);font:400 var(--text-ui)/1 var(--font-ui);color:var(--color-ink-900);outline:none"><option value="Commercial">Commercial</option><option value="Employment">Employment</option><option value="Real estate">Real estate</option><option value="Technology">Technology</option><option value="Corporate">Corporate</option><option value="Privacy">Privacy</option></select><span style="position:absolute;right:calc(var(--spacing) * 3);bottom:calc(var(--spacing) * 3);width:14px;height:14px;pointer-events:none;display:inline-block;background:var(--color-ink-500);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/chevron-down.svg) center/contain no-repeat"></span></label>
+      <div style="display:flex;flex-direction:column;gap:calc(var(--spacing) * 1)"><span style="font:500 var(--text-small)/1 var(--font-ui);color:var(--color-ink-800)">Status</span><div role="radiogroup" style="display:flex;gap:calc(var(--spacing) * 1);padding:calc(var(--spacing) * 1);border-radius:var(--radius-md);background:var(--color-ink-100)"><sc-for list="{{ formStatuses }}" as="s"><button type="button" role="radio" onClick="{{ s.onClick }}" style="flex:1;height:34px;border:none;border-radius:var(--radius-sm);background:{{ s.bg }};color:{{ s.color }};box-shadow:{{ s.shadow }};font:500 var(--text-small)/1 var(--font-ui);cursor:pointer">{{ s.label }}</button></sc-for></div></div>
+      <div style="display:flex;justify-content:flex-end;gap:calc(var(--spacing) * 2);margin-top:calc(var(--spacing) * 1)"><button type="button" onClick="{{ closeForm }}" style="height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer">Cancel</button><button type="submit" style="height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-blue-700)">{{ formCta }}</button></div>
+    </form>
+  </div>
+</sc-if>
+
+<sc-if value="{{ hasConfirm }}">
+  <div style="position:absolute;inset:0;z-index:50;background:var(--color-scrim);display:flex;align-items:center;justify-content:center;padding:calc(var(--spacing) * 4)">
+    <div role="alertdialog" aria-modal="true" aria-label="{{ confirmTitle }}" style="width:100%;max-width:420px;background:var(--color-ink-0);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 6);box-shadow:var(--shadow-3);display:flex;flex-direction:column;gap:calc(var(--spacing) * 2);animation:cfIn 200ms ease-out">
+      <span style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-risk-high-bg);color:var(--color-risk-high);display:flex;align-items:center;justify-content:center;margin-bottom:calc(var(--spacing) * 1)"><span style="width:18px;height:18px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/trash-2.svg) center/contain no-repeat"></span></span>
+      <div style="font:600 var(--text-h3)/1.3 var(--font-display);color:var(--color-ink-900)">{{ confirmTitle }}</div>
+      <div style="font:400 var(--text-ui)/1.55 var(--font-ui);color:var(--color-ink-600)">{{ confirmBody }}</div>
+      <div style="display:flex;justify-content:flex-end;gap:calc(var(--spacing) * 2);margin-top:calc(var(--spacing) * 2)"><button onClick="{{ closeConfirm }}" style="height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:1px solid var(--color-ink-200);background:var(--color-ink-0);color:var(--color-ink-800);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer">Cancel</button><button onClick="{{ doConfirm }}" style="height:40px;padding:0 calc(var(--spacing) * 4);border-radius:var(--radius-md);border:none;background:var(--color-risk-high);color:var(--color-ink-0);font:500 var(--text-ui)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-action-danger-hover)">{{ confirmLabel }}</button></div>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ session }}">
+  <div style="position:absolute;inset:0;z-index:60;background:var(--color-scrim);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:calc(var(--spacing) * 4)">
+    <div role="alertdialog" aria-modal="true" aria-label="Session expired" style="width:100%;max-width:400px;background:var(--color-ink-0);border-radius:var(--radius-xl);padding:calc(var(--spacing) * 6);box-shadow:var(--shadow-3);display:flex;flex-direction:column;align-items:center;text-align:center;gap:calc(var(--spacing) * 2);animation:cfIn 200ms ease-out">
+      <span style="width:44px;height:44px;border-radius:var(--radius-lg);background:var(--color-blue-50);color:var(--color-blue-600);display:flex;align-items:center;justify-content:center"><span style="width:20px;height:20px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/timer-off.svg) center/contain no-repeat"></span></span>
+      <div style="font:600 var(--text-h3)/1.3 var(--font-display);color:var(--color-ink-900)">Your session has expired</div>
+      <div style="font:400 var(--text-ui)/1.55 var(--font-ui);color:var(--color-ink-600)">For your security, please sign in again. You’ll come straight back to this page.</div>
+      <button onClick="{{ reauth }}" style="width:100%;height:44px;margin-top:calc(var(--spacing) * 2);border-radius:var(--radius-md);border:none;background:var(--color-blue-600);color:var(--color-ink-0);font:500 var(--text-body)/1 var(--font-ui);cursor:pointer" style-hover="background:var(--color-blue-700)">Sign in again</button>
+    </div>
+  </div>
+</sc-if>
+
+<div aria-live="polite" style="position:absolute;left:calc(var(--spacing) * 4);right:calc(var(--spacing) * 4);bottom:{{ toastBottom }};top:{{ toastTop }};z-index:70;display:flex;flex-direction:column;align-items:{{ toastAlign }};gap:calc(var(--spacing) * 2);pointer-events:none">
+  <sc-for list="{{ toasts }}" as="t">
+    <div role="status" style="pointer-events:auto;max-width:420px;display:flex;align-items:center;gap:calc(var(--spacing) * 2);padding:calc(var(--spacing) * 3) calc(var(--spacing) * 3) calc(var(--spacing) * 3) calc(var(--spacing) * 3);border-radius:var(--radius-lg);background:var(--color-ink-900);color:var(--color-ink-0);box-shadow:var(--shadow-3);font:500 var(--text-small)/1.35 var(--font-ui);animation:cfIn 220ms ease-out">
+      <sc-if value="{{ t.isSuccess }}"><span style="width:16px;height:16px;flex:none;display:inline-block;background:var(--color-risk-low-on-dark);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-check.svg) center/contain no-repeat"></span></sc-if>
+      <sc-if value="{{ t.isError }}"><span style="width:16px;height:16px;flex:none;display:inline-block;background:var(--color-risk-high-on-dark);-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/circle-x.svg) center/contain no-repeat"></span></sc-if>
+      <span style="flex:1">{{ t.msg }}</span>
+      <sc-if value="{{ t.hasAction }}"><button onClick="{{ t.onAction }}" style="border:none;background:none;color:var(--color-blue-300);font:500 var(--text-small)/1 var(--font-ui);cursor:pointer;padding:0 calc(var(--spacing) * 1)">{{ t.actionLabel }}</button></sc-if>
+      <button onClick="{{ t.onClose }}" aria-label="Dismiss" style="width:24px;height:24px;flex:none;border:none;border-radius:var(--radius-xs);background:transparent;color:var(--color-fg-muted);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="width:13px;height:13px;display:inline-block;background:currentColor;-webkit-mask:url(https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/x.svg) center/contain no-repeat"></span></button>
+    </div>
+  </sc-for>
+</div>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;startScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;signin&quot;,&quot;matters&quot;,&quot;matter&quot;,&quot;review&quot;],&quot;default&quot;:&quot;signin&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;device&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;desktop&quot;,&quot;mobile&quot;],&quot;default&quot;:&quot;desktop&quot;,&quot;tsType&quot;:&quot;'desktop'|'mobile'&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;simulate&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;none&quot;,&quot;listError&quot;,&quot;reviewFailure&quot;,&quot;assistantError&quot;],&quot;default&quot;:&quot;none&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;showShortcuts&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;}}">
+const IC='https://cdn.jsdelivr.net/npm/lucide-static@0.460.0/icons/';
+const mk=n=>'url('+IC+n+'.svg)';
+const ORGS=[{id:'o1',name:'Harlow & Lane LLP',ini:'HL',sub:'Law firm · 4 members'},{id:'o2',name:'Northgate Group Legal',ini:'NG',sub:'In-house · 2 members'}];
+const PEOPLE={MO:{name:'Maya Okafor',bg:'var(--color-blue-100)',fg:'var(--color-blue-700)',role:'Owner'},DR:{name:'Daniel Reyes',bg:'var(--color-risk-low-bg)',fg:'var(--color-risk-low)',role:'Attorney'},SK:{name:'Sana Kapoor',bg:'var(--color-risk-med-bg)',fg:'var(--color-risk-med)',role:'Attorney'},TB:{name:'Tom Becker',bg:'var(--color-risk-high-bg)',fg:'var(--color-risk-high)',role:'Paralegal'}};
+const ORG_PEOPLE={o1:['MO','DR','SK','TB'],o2:['MO','DR']};
+const AREAS=['Commercial','Employment','Real estate','Technology','Corporate','Privacy'];
+const STATUSES=['Open','In review','Closed'];
+const MATTERS=[
+{id:'m1',org:'o1',name:'Acme Ltd – Supplier agreement',client:'Acme Ltd',area:'Commercial',status:'In review',last:12,owner:'MO'},
+{id:'m2',org:'o1',name:'Northwind – Senior hire contract',client:'Northwind Health',area:'Employment',status:'Open',last:1500,owner:'DR'},
+{id:'m3',org:'o1',name:'Brightwater – Office lease renewal',client:'Brightwater Co.',area:'Real estate',status:'Closed',last:30200,owner:'SK'},
+{id:'m4',org:'o1',name:'Kestrel Foods – Distribution deal',client:'Kestrel Foods',area:'Commercial',status:'Open',last:130,owner:'MO'},
+{id:'m5',org:'o1',name:'Lumen – SaaS licence',client:'Lumen Analytics',area:'Technology',status:'In review',last:300,owner:'TB'},
+{id:'m6',org:'o1',name:'Fenwick – Shareholder agreement',client:'Fenwick & Daughters',area:'Corporate',status:'Open',last:4400,owner:'SK'},
+{id:'m7',org:'o1',name:'Orbital Studio – Contractor NDA',client:'Orbital Studio',area:'Commercial',status:'Closed',last:49000,owner:'DR'},
+{id:'m8',org:'o1',name:'Halden Pharma – Executive severance',client:'Halden Pharma',area:'Employment',status:'In review',last:360,owner:'MO'},
+{id:'m9',org:'o1',name:'Pike Logistics – Warehouse lease',client:'Pike Logistics',area:'Real estate',status:'Open',last:13000,owner:'TB'},
+{id:'m10',org:'o2',name:'Cloud hosting MSA',client:'Northgate Group',area:'Technology',status:'In review',last:40,owner:'MO'},
+{id:'m11',org:'o2',name:'Marketing agency SOW',client:'Northgate Group',area:'Commercial',status:'Open',last:2900,owner:'MO'},
+{id:'m12',org:'o2',name:'Data processing addendum',client:'Northgate Group',area:'Privacy',status:'Closed',last:21600,owner:'DR'}];
+const DOCS=[
+{id:'d1',matter:'m1',name:'Master Services Agreement.pdf',type:'PDF',pages:22,by:'MO',at:120,status:'ready',progress:100,counts:[2,3,2]},
+{id:'d2',matter:'m1',name:'Schedule 1 – Specification.docx',type:'Word',pages:6,by:'DR',at:4,status:'analysing',progress:58,counts:[0,1,4]},
+{id:'d3',matter:'m1',name:'Pricing annex.pdf',type:'PDF',pages:4,by:'MO',at:30,status:'failed',progress:0,counts:[0,2,1]},
+{id:'d4',matter:'m4',name:'Distribution agreement v2.pdf',type:'PDF',pages:31,by:'MO',at:130,status:'ready',progress:100,counts:[1,4,6]},
+{id:'d5',matter:'m10',name:'Cloud hosting MSA.pdf',type:'PDF',pages:40,by:'MO',at:40,status:'ready',progress:100,counts:[3,2,9]},
+{id:'d6',matter:'m2',name:'Employment contract – J. Park.docx',type:'Word',pages:12,by:'DR',at:1500,status:'ready',progress:100,counts:[1,2,5]},
+{id:'d7',matter:'m5',name:'Lumen SaaS terms.pdf',type:'PDF',pages:18,by:'TB',at:300,status:'ready',progress:100,counts:[2,4,7]},
+{id:'d8',matter:'m5',name:'Lumen DPA.pdf',type:'PDF',pages:9,by:'TB',at:310,status:'ready',progress:100,counts:[0,1,6]},
+{id:'d9',matter:'m3',name:'Lease renewal – final.pdf',type:'PDF',pages:27,by:'SK',at:30200,status:'ready',progress:100,counts:[0,2,8]},
+{id:'d10',matter:'m8',name:'Severance agreement.docx',type:'Word',pages:8,by:'MO',at:360,status:'ready',progress:100,counts:[2,1,3]},
+{id:'d11',matter:'m11',name:'Agency SOW.pdf',type:'PDF',pages:5,by:'MO',at:2900,status:'ready',progress:100,counts:[0,2,3]},
+{id:'d12',matter:'m12',name:'DPA – signed.pdf',type:'PDF',pages:11,by:'DR',at:21600,status:'ready',progress:100,counts:[0,0,5]}];
+const ACT_ICON={flag:['flag','var(--color-risk-med-bg)','var(--color-risk-med)'],accept:['circle-check','var(--color-risk-low-bg)','var(--color-risk-low)'],ask:['message-square','var(--color-blue-50)','var(--color-blue-600)'],upload:['upload','var(--color-ink-50)','var(--color-ink-600)'],create:['folder-plus','var(--color-ink-50)','var(--color-ink-600)'],remove:['trash-2','var(--color-risk-high-bg)','var(--color-risk-high)'],edit:['pencil','var(--color-ink-50)','var(--color-ink-600)'],ready:['sparkles','var(--color-blue-50)','var(--color-blue-600)']};
+const buildAct=()=>{const a=[{m:'m1',who:'MO',kind:'flag',text:'flagged § 7.1 Limitation of liability',at:12},{m:'m1',who:'DR',kind:'ask',text:'asked “Can we end this contract early?”',at:60},{m:'m1',who:'MO',kind:'accept',text:'accepted § 13.2 Confidentiality',at:95},{m:'m1',who:null,kind:'ready',text:'Analysis finished for Master Services Agreement.pdf',at:115},{m:'m1',who:'MO',kind:'upload',text:'uploaded Master Services Agreement.pdf',at:120},{m:'m1',who:'MO',kind:'create',text:'created the matter',at:1440}];
+  MATTERS.filter(m=>m.id!=='m1').forEach(m=>{DOCS.filter(d=>d.matter===m.id).forEach(d=>a.push({m:m.id,who:d.by,kind:'upload',text:'uploaded '+d.name,at:d.at}));a.push({m:m.id,who:m.owner,kind:'create',text:'created the matter',at:m.last+60});});return a;};
+const CLAUSES=[
+{id:'c1',sec:'4.2',type:'Late payment interest',risk:'med',why:'Interest of 4% a month — roughly 48% a year, far above market.',detail:'Compounded monthly with no grace period. A single delayed invoice could grow quickly; courts may also treat this as a penalty.',revision:'Late payments accrue interest at 1% per month above the Bank of England base rate, after a 15-day grace period.'},
+{id:'c2',sec:'7.1',type:'Limitation of liability',risk:'high',why:'Your client’s liability is uncapped, while the supplier’s is limited to 3 months of fees.',detail:'The cap only protects the supplier. A product defect claim against your client could exceed the whole contract value.',revision:'Each party’s total aggregate liability shall not exceed the Fees paid in the twelve (12) months preceding the claim.'},
+{id:'c3',sec:'9.3',type:'Termination for convenience',risk:'high',why:'The supplier can walk away on 7 days’ notice. Your client has no equivalent right.',detail:'Seven days is too short to find a replacement packaging supplier and the right is one-sided.',revision:'Either party may terminate this Agreement for convenience by giving not less than sixty (60) days’ written notice.'},
+{id:'c4',sec:'10.1',type:'Indemnity',risk:'med',why:'Your client indemnifies the supplier even for the supplier’s own negligence.',detail:'“Howsoever arising” makes the indemnity very broad. Indemnities should follow fault.',revision:'Each party shall indemnify the other against losses to the extent caused by its breach of this Agreement or negligence.'},
+{id:'c5',sec:'12.1',type:'Automatic renewal',risk:'med',why:'Renews for 24 more months unless cancelled 90 days before the term ends.',detail:'Long renewal periods with an early notice window are easy to miss and lock the client in.',revision:'This Agreement renews for successive periods of twelve (12) months unless either party gives thirty (30) days’ notice.'},
+{id:'c6',sec:'13.2',type:'Confidentiality',risk:'low',why:'Standard mutual obligations lasting 3 years after termination.',detail:'Mutual and time-limited. In line with market practice for supply agreements.',revision:'No change suggested.'},
+{id:'c7',sec:'15.1',type:'Governing law',risk:'low',why:'English law and courts — consistent with your client’s location.',detail:'No conflict with your client’s jurisdiction.',revision:'No change suggested.'}];
+const DOC=[
+['h','1. Definitions'],['1.1','“Agreement” means these terms together with each Order Form signed by the parties. “Services” means the supply of packaging materials described in Schedule 1.'],
+['h','2. Term'],['2.1','This Agreement starts on the Effective Date and continues for an initial term of twenty-four (24) months, unless terminated earlier under clause 9.'],
+['h','4. Fees and payment'],['4.1','The Client shall pay the Fees set out in the Order Form within thirty (30) days of the date of a valid invoice.'],['4.2','Any amount not paid when due shall accrue interest at a rate of four per cent (4%) per month, calculated daily and compounded monthly, from the due date until payment in full.'],
+['h','7. Liability'],['7.1','The Supplier’s total aggregate liability arising under or in connection with this Agreement shall not exceed the Fees paid by the Client in the three (3) months preceding the claim. Nothing in this Agreement limits the Client’s liability to the Supplier.'],['7.2','Neither party excludes liability for death or personal injury caused by its negligence, or for fraud.'],
+['h','9. Termination'],['9.1','Either party may terminate this Agreement immediately by written notice if the other commits a material breach that is not remedied within thirty (30) days of being notified of it.'],['9.3','The Supplier may terminate this Agreement for convenience at any time by giving the Client not less than seven (7) days’ written notice.'],
+['h','10. Indemnity'],['10.1','The Client shall indemnify the Supplier against all losses, claims and costs howsoever arising in connection with the Services, including where caused by the Supplier’s own negligence.'],
+['h','12. Renewal'],['12.1','On expiry of the initial term, this Agreement renews automatically for successive periods of twenty-four (24) months unless either party gives notice of non-renewal at least ninety (90) days before the end of the then-current term.'],
+['h','13. Confidentiality'],['13.2','Each party shall keep the other’s Confidential Information secret for the term of this Agreement and for three (3) years after termination.'],
+['h','15. Governing law'],['15.1','This Agreement is governed by the laws of England and Wales, and the courts of England have exclusive jurisdiction.']];
+const TITLES={'2.1':'Initial term','7.1':'Limitation of liability','7.2':'Excluded liability','9.1':'Termination for breach','9.3':'Termination for convenience','12.1':'Automatic renewal'};
+const ANSWERS=[
+{q:'Can we end this contract early?',parts:['Only in limited cases. Your client can terminate straight away for a material breach the supplier fails to fix within 30 days',['9.1'],'. There is no right to terminate for convenience — that right belongs only to the supplier, on 7 days’ notice',['9.3'],'. Otherwise the agreement runs for 24 months and renews unless notice is given 90 days before the term ends',['12.1'],'. Worth negotiating a mutual termination right.']},
+{q:'What is our maximum liability?',parts:['Your client’s liability is not capped. The cap in the agreement only protects the supplier, limiting it to fees paid in the previous three months',['7.1'],'. Liability for death, personal injury and fraud is never excluded for either party',['7.2'],'. Push for a mutual cap, typically 12 months of fees.']},
+{q:'Are there any automatic renewals?',parts:['Yes. After the initial 24-month term',['2.1'],' the agreement renews for further 24-month periods unless either party gives notice at least 90 days before the term ends',['12.1'],'. Put the notice deadline in the diary now.']}];
+const HL={high:['var(--color-risk-high-hl)','var(--color-risk-high-hl-strong)','var(--color-risk-high-ring)'],med:['var(--color-risk-med-hl)','var(--color-risk-med-hl-strong)','var(--color-risk-med-ring)'],low:['var(--color-risk-low-hl)','var(--color-risk-low-hl-strong)','var(--color-risk-low-ring)']};
+const COLS=[['name','Matter'],['client','Client'],['area','Practice area'],['status','Status'],['docs','Docs'],['last','Last activity'],['owner','Owner']];
+const PAGE=6;
+const fmt=m=>{if(m<1)return'Just now';if(m<60)return m+' min ago';const h=Math.round(m/60);if(h<24)return h+' h ago';const d=Math.round(h/24);if(d===1)return'Yesterday';if(d<14)return d+' days ago';return new Date(2026,9,23-d).toLocaleDateString('en-GB',{day:'numeric',month:'short'});};
+class Component extends DCLogic {
+  state=(()=>{const s=this.props.startScreen||'signin';return{route:s,authMode:'signin',org:'o1',orgMenu:false,userMenu:false,drawer:false,
+    matters:MATTERS.map(m=>({...m})),docs:DOCS.map(d=>({...d})),act:buildAct(),
+    q:'',fStatus:'All',fArea:'All',sortKey:'last',sortDir:1,page:1,listLoading:false,listError:(this.props.simulate==='listError'),
+    form:null,matterId:'m1',tab:'docs',dragOver:false,confirm:null,toasts:[],session:false,errorFrom:'matters',
+    docId:'d1',rs:{d1:{c6:'accepted',c7:'accepted'}},sel:'c2',filter:'All',noteOpen:null,notes:{},hover:null,rtab:'clauses',ans:null,shown:0,copied:false,draft:'',askError:false,filterSheet:false,mAsk:false,mSheet:true};})();
+  docRef=React.createRef();fileRef=React.createRef();n=100;
+  componentDidMount(){
+    try{const h=location.hash;if(h.startsWith('#matters?')){const p=new URLSearchParams(h.slice(9));const sk=(p.get('sort')||'last.asc').split('.');this.setState({q:p.get('q')||'',fStatus:p.get('status')||'All',fArea:p.get('area')||'All',sortKey:sk[0],sortDir:sk[1]==='desc'?-1:1,page:+p.get('page')||1,route:this.state.route==='signin'?'signin':'matters'});}}catch(e){}
+    this.onKey=e=>{if(this.state.route!=='review'||this.isMobile())return;const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT'||e.metaKey||e.ctrlKey||e.altKey)return;const k=e.key;const sel=this.state.sel;
+      if(k==='j'||k==='k'){e.preventDefault();this.step(k==='j'?1:-1);}else if(k==='a'&&sel){e.preventDefault();this.accept(sel);}else if(k==='f'&&sel){e.preventDefault();this.flag(sel);}};
+    window.addEventListener('keydown',this.onKey);
+    this.iv=setInterval(()=>this.tick(),300);
+  }
+  componentDidUpdate(pp){if(pp.simulate!==this.props.simulate&&this.props.simulate==='listError')this.setState({listError:true});}
+  componentWillUnmount(){window.removeEventListener('keydown',this.onKey);clearInterval(this.iv);clearInterval(this.timer);}
+  isMobile(){return this.props.device==='mobile';}
+  go(route,extra){this.setState({route,orgMenu:false,userMenu:false,drawer:false,filterSheet:false,mAsk:false,...(extra||{})});const m=document.querySelector('[data-main]');if(m)m.scrollTop=0;}
+  toast(kind,msg,action){const id=++this.n;this.setState(s=>({toasts:[...s.toasts.slice(-2),{id,kind,msg,action}]}));setTimeout(()=>this.setState(s=>({toasts:s.toasts.filter(t=>t.id!==id)})),4500);}
+  log(m,kind,text){this.setState(s=>({act:[{m,who:kind==='ready'?null:'MO',kind,text,at:0},...s.act],matters:s.matters.map(x=>x.id===m?{...x,last:0}:x)}));}
+  syncUrl(){const s=this.state;const p=new URLSearchParams();if(s.q)p.set('q',s.q);if(s.fStatus!=='All')p.set('status',s.fStatus);if(s.fArea!=='All')p.set('area',s.fArea);if(s.sortKey!=='last'||s.sortDir!==1)p.set('sort',s.sortKey+'.'+(s.sortDir>0?'asc':'desc'));if(s.page>1)p.set('page',s.page);
+    try{history.replaceState(null,'','#matters'+(p.toString()?'?'+p.toString():''));}catch(e){}}
+  setFilters(patch){clearTimeout(this.lt);this.setState({...patch,page:patch.page||1,listLoading:true},()=>this.syncUrl());this.lt=setTimeout(()=>this.setState({listLoading:false}),380);}
+  orgMatters(){return this.state.matters.filter(m=>m.org===this.state.org);}
+  docCount(id){return this.state.docs.filter(d=>d.matter===id).length;}
+  filtered(){const s=this.state;const q=s.q.trim().toLowerCase();
+    const l=this.orgMatters().filter(m=>(!q||m.name.toLowerCase().includes(q)||m.client.toLowerCase().includes(q))&&(s.fStatus==='All'||m.status===s.fStatus)&&(s.fArea==='All'||m.area===s.fArea));
+    const k=s.sortKey,d=s.sortDir;const v=m=>k==='docs'?this.docCount(m.id):k==='last'?m.last:k==='status'?STATUSES.indexOf(m.status):k==='owner'?PEOPLE[m.owner].name:m[k].toLowerCase();
+    return l.sort((a,b)=>{const x=v(a),y=v(b);return(x<y?-1:x>y?1:0)*d;});}
+  tick(){const ds=this.state.docs;if(!ds.some(d=>d.status==='uploading'||d.status==='analysing'))return;const up=[],rd=[];
+    const docs=ds.map(d=>{if(d.status==='uploading'){const p=Math.min(100,d.progress+14);if(p>=100){up.push(d);return{...d,status:'analysing',progress:0};}return{...d,progress:p};}
+      if(d.status==='analysing'){const p=Math.min(100,d.progress+2.5);if(p>=100){rd.push(d);return{...d,status:'ready',progress:100};}return{...d,progress:p};}return d;});
+    this.setState({docs});up.forEach(d=>this.log(d.matter,'upload','uploaded '+d.name));rd.forEach(d=>{this.log(d.matter,'ready','Analysis finished for '+d.name);this.toast('success','Analysis ready — '+d.name,{label:'Review',fn:()=>this.openReview(d.id)});});}
+  addFiles(files){const m=this.state.matterId;const ok=[],bad=[];files.forEach(f=>(/\.(pdf|docx?)$/i.test(f.name)?ok:bad).push(f));
+    if(bad.length)this.toast('error','Only PDF and Word files can be analysed.');
+    if(!ok.length)return;const nd=ok.map(f=>({id:'d'+(++this.n),matter:m,name:f.name,type:/\.docx?$/i.test(f.name)?'Word':'PDF',pages:Math.max(2,Math.round((f.size||300000)/45000)),by:'MO',at:0,status:'uploading',progress:0,counts:[1,2,4]}));
+    this.setState(s=>({docs:[...nd,...s.docs]}));}
+  openReview(id){const d=this.state.docs.find(x=>x.id===id);if(!d)return;const rs=this.state.rs[id]?this.state.rs:{...this.state.rs,[id]:{}};const first=CLAUSES.find(c=>!rs[id][c.id]);
+    this.go('review',{docId:id,matterId:d.matter,rs,sel:first?first.id:'c1',filter:'All',ans:null,shown:0,askError:false,hover:null,rtab:'clauses',noteOpen:null,mSheet:true});}
+  visible(){const{filter}=this.state;const st=this.state.rs[this.state.docId]||{};return CLAUSES.filter(c=>filter==='All'||(filter==='Unreviewed'?!st[c.id]:c.risk===({High:'high',Medium:'med',Low:'low'})[filter]));}
+  step(dir){const l=this.visible();if(!l.length)return;const i=l.findIndex(c=>c.id===this.state.sel);const n=i<0?0:Math.max(0,Math.min(l.length-1,i+dir));this.select(l[n].id);}
+  scrollTo(sec){const r=this.docRef.current;const el=r&&r.querySelector('[data-sec="'+sec+'"]');if(el)r.scrollTo({top:Math.max(0,el.offsetTop-90),behavior:'smooth'});}
+  select(id){const c=CLAUSES.find(x=>x.id===id);this.setState({sel:id,noteOpen:this.state.noteOpen===id?id:null});if(c)this.scrollTo(c.sec);}
+  fails(){if(this.noFail){this.noFail=false;return false;}return this.props.simulate==='reviewFailure';}
+  setRs(d,v){this.setState(s=>({rs:{...s.rs,[d]:v}}));}
+  accept(id){const d=this.state.docId;const prev=this.state.rs[d]||{};const was=prev[id]==='accepted';const next={...prev};if(was)delete next[id];else next[id]='accepted';const c=CLAUSES.find(x=>x.id===id);
+    let sel=this.state.sel;if(!was){const n=CLAUSES.find(x=>!next[x.id]);sel=n?n.id:id;}
+    this.setState(s=>({rs:{...s.rs,[d]:next},sel,noteOpen:null}));if(!was&&sel!==id)this.scrollTo(CLAUSES.find(x=>x.id===sel).sec);
+    if(this.fails()){setTimeout(()=>{this.setRs(d,prev);this.setState({sel:id});this.toast('error','Couldn’t save your review. We put the clause back as it was.',{label:'Retry',fn:()=>{this.noFail=true;this.accept(id);}});},700);return;}
+    this.toast('success',was?'Marked as unreviewed':'Clause accepted',{label:'Undo',fn:()=>this.setRs(d,prev)});if(!was)this.log(this.state.matterId,'accept','accepted § '+c.sec+' '+c.type);}
+  flag(id){const d=this.state.docId;const prev=this.state.rs[d]||{};const was=prev[id]==='flagged';const next={...prev};if(was)delete next[id];else next[id]='flagged';const c=CLAUSES.find(x=>x.id===id);
+    this.setState(s=>({rs:{...s.rs,[d]:next},sel:id,noteOpen:was?null:id}));
+    if(this.fails()){setTimeout(()=>{this.setRs(d,prev);this.setState({noteOpen:null});this.toast('error','Couldn’t save your review. We put the clause back as it was.',{label:'Retry',fn:()=>{this.noFail=true;this.flag(id);}});},700);return;}
+    this.toast('success',was?'Flag removed':'Clause flagged — add a note',{label:'Undo',fn:()=>{this.setRs(d,prev);this.setState({noteOpen:null});}});if(!was)this.log(this.state.matterId,'flag','flagged § '+c.sec+' '+c.type);}
+  ask(i,qText){clearInterval(this.timer);const a=ANSWERS[i];const toks=[];let n=0;const cites=[];
+    a.parts.forEach(p=>{if(Array.isArray(p)){n++;cites.push({n,sec:p[0]});toks.push({cite:true,n,sec:p[0]});}else p.split(/(?<= )/).forEach(w=>toks.push({w}));});
+    const q=qText||a.q;const failAt=(this.props.simulate==='assistantError'&&!this.askRetried)?Math.floor(toks.length*.4):-1;
+    this.setState({ans:{q,i,toks,cites,text:a.parts.map(p=>Array.isArray(p)?'['+cites.find(c=>c.sec===p[0]).n+']':p).join('')},shown:0,rtab:'ask',draft:'',askError:false});
+    if(!this.askedOnce){this.askedOnce=true;this.log(this.state.matterId,'ask','asked “'+q+'”');}
+    this.timer=setInterval(()=>{const s=this.state;if(!s.ans){clearInterval(this.timer);return;}if(failAt>=0&&s.shown>=failAt){clearInterval(this.timer);this.setState({askError:true});return;}if(s.shown>=s.ans.toks.length){clearInterval(this.timer);return;}this.setState({shown:s.shown+1});},38);}
+  saveForm(e){if(e&&e.preventDefault)e.preventDefault();const f=this.state.form;const errors={};if(!f.name.trim())errors.name='Matter name is required';if(!f.client.trim())errors.client='Client is required';
+    if(errors.name||errors.client){this.setState({form:{...f,errors}});return;}
+    if(f.mode==='new'){const id='m'+(++this.n);const m={id,org:this.state.org,name:f.name.trim(),client:f.client.trim(),area:f.area,status:f.status,last:0,owner:'MO'};
+      this.setState(s=>({matters:[m,...s.matters],form:null,act:[{m:id,who:'MO',kind:'create',text:'created the matter',at:0},...s.act]}));this.go('matter',{matterId:id,tab:'docs'});this.toast('success','Matter created');}
+    else{this.setState(s=>({matters:s.matters.map(x=>x.id===f.id?{...x,name:f.name.trim(),client:f.client.trim(),area:f.area,status:f.status}:x),form:null}));this.log(f.id,'edit','updated the matter details');this.toast('success','Matter updated');}}
+  setForm(k){return e=>{const v=e&&e.target?e.target.value:e;this.setState(s=>({form:{...s.form,[k]:v,errors:{...s.form.errors,[k]:null}}}));};}
+  renderVals(){
+    const st=this.state;const mob=this.isMobile();const r=st.route;const org=ORGS.find(o=>o.id===st.org);const me=PEOPLE.MO;
+    const av=k=>{const p=PEOPLE[k]||{name:'Casefile',bg:'var(--color-blue-50)',fg:'var(--color-blue-600)'};return{name:p.name,ini:k||'CF',bg:p.bg,fg:p.fg};};
+    const stat=s=>({isOpen:s==='Open',isReview:s==='In review',isClosed:s==='Closed'});
+    // frame
+    const frame=mob?{stageBg:'var(--color-ink-200)',frameW:'390px',frameH:'844px',frameR:'var(--radius-xl)',frameShadow:'var(--shadow-device)'}:{stageBg:'var(--color-ink-50)',frameW:'100%',frameH:'100vh',frameR:'0',frameShadow:'none'};
+    // auth
+    const signup=st.authMode==='signup';
+    // matters
+    const all=this.filtered();const pages=Math.max(1,Math.ceil(all.length/PAGE));const page=Math.min(st.page,pages);const rows=all.slice((page-1)*PAGE,page*PAGE);
+    const hasFilters=!!st.q||st.fStatus!=='All'||st.fArea!=='All';const clear=()=>this.setFilters({q:'',fStatus:'All',fArea:'All',filterSheet:false});
+    const matterRows=rows.map(m=>{const o=av(m.owner);return{...m,...stat(m.status),docs:this.docCount(m.id),lastLabel:fmt(m.last),ownerName:o.name.split(' ')[0]+' '+o.name.split(' ')[1][0]+'.',ownerIni:m.owner,ownerBg:o.bg,ownerFg:o.fg,onClick:()=>this.go('matter',{matterId:m.id,tab:'docs'})};});
+    const cols=COLS.map(([k,l])=>{const on=st.sortKey===k;return{label:l,isUp:on&&st.sortDir>0,isDown:on&&st.sortDir<0,color:on?'var(--color-ink-900)':'var(--color-ink-500)',aria:on?(st.sortDir>0?'ascending':'descending'):'none',onClick:()=>this.setFilters({sortKey:k,sortDir:on?-st.sortDir:1,page:st.page})};});
+    const chip=(label,active,fn)=>({label,active,bg:active?'var(--color-ink-900)':'var(--color-ink-0)',color:active?'var(--color-ink-0)':'var(--color-ink-700)',border:active?'var(--color-ink-900)':'var(--color-ink-200)',onClick:fn});
+    const statusChips=['All',...STATUSES].map(s=>chip(s,st.fStatus===s,()=>this.setFilters({fStatus:s})));
+    const areaChips=['All',...AREAS].map(a=>chip(a==='All'?'All areas':a,st.fArea===a,()=>this.setFilters({fArea:a})));
+    const activeFilterCount=(st.fStatus!=='All'?1:0)+(st.fArea!=='All'?1:0);
+    // matter
+    const matter=st.matters.find(m=>m.id===st.matterId)||st.matters[0];const mo=av(matter.owner);
+    const mdocs=st.docs.filter(d=>d.matter===matter.id).map(d=>{const u=av(d.by);return{...d,isUploading:d.status==='uploading',isAnalysing:d.status==='analysing',isReady:d.status==='ready',isFailed:d.status==='failed',
+      pct:Math.round(d.progress)+'%',h:d.counts[0],m:d.counts[1],l:d.counts[2],meta:d.type+' · '+d.pages+' pages',byName:u.name,byIni:d.by,byBg:u.bg,byFg:u.fg,when:fmt(d.at),
+      onOpen:()=>this.openReview(d.id),onRow:()=>{if(d.status==='ready')this.openReview(d.id);},rowCursor:d.status==='ready'?'pointer':'default',
+      onRetry:e=>{e.stopPropagation();this.setState(s=>({docs:s.docs.map(x=>x.id===d.id?{...x,status:'analysing',progress:0}:x)}));this.toast('success','Analysis restarted');},
+      onRemove:e=>{e.stopPropagation();this.setState({confirm:{title:'Remove this document?',body:'“'+d.name+'” and its review will be removed from this matter. This can’t be undone.',label:'Remove document',fn:()=>{this.setState(s=>({docs:s.docs.filter(x=>x.id!==d.id),confirm:null}));this.log(d.matter,'remove','removed '+d.name);this.toast('success','Document removed');}}});}};});
+    const acts=st.act.filter(a=>a.m===matter.id).map((a,i,arr)=>{const ic=ACT_ICON[a.kind];const u=av(a.who);return{who:a.who?u.name:'Casefile',text:a.text,when:fmt(a.at),mask:mk(ic[0]),bg:ic[1],fg:ic[2],notLast:i<arr.length-1};});
+    const tabStyle=on=>({bg:on?'var(--color-ink-0)':'transparent',color:on?'var(--color-ink-900)':'var(--color-ink-500)',shadow:on?'var(--shadow-1)':'none'});
+    const td=tabStyle(st.tab==='docs'),ta=tabStyle(st.tab==='activity');
+    // documents page
+    const orgDocs=st.docs.filter(d=>{const m=st.matters.find(x=>x.id===d.matter);return m&&m.org===st.org;}).map(d=>{const m=st.matters.find(x=>x.id===d.matter);return{name:d.name,matter:m.name,meta:d.type+' · '+d.pages+' pp',when:fmt(d.at),isReady:d.status==='ready',isBusy:d.status==='uploading'||d.status==='analysing',isFailed:d.status==='failed',pct:Math.round(d.progress)+'%',h:d.counts[0],m:d.counts[1],l:d.counts[2],onClick:()=>d.status==='ready'?this.openReview(d.id):this.go('matter',{matterId:m.id,tab:'docs'})};});
+    // review
+    const rdoc=st.docs.find(d=>d.id===st.docId)||st.docs[0];const rst=st.rs[rdoc.id]||{};const reviewed=CLAUSES.filter(c=>rst[c.id]).length;
+    const vis=this.visible();const stop=e=>e.stopPropagation();
+    const clauses=vis.map(c=>{const s=rst[c.id];const sel=st.sel===c.id;return{...c,isHigh:c.risk==='high',isMed:c.risk==='med',isLow:c.risk==='low',isAccepted:s==='accepted',isFlagged:s==='flagged',
+      showWhy:s!=='accepted'||sel,expanded:sel,noteOpen:sel&&st.noteOpen===c.id,note:st.notes[c.id]||'',showFlagNote:s==='flagged'&&!sel&&!!st.notes[c.id],
+      bg:s==='accepted'&&!sel?'var(--color-ink-25)':'var(--color-ink-0)',titleColor:s==='accepted'&&!sel?'var(--color-ink-600)':'var(--color-ink-900)',border:sel?'var(--color-blue-300)':'var(--color-border-subtle)',ring:sel?'var(--shadow-selected)':'var(--shadow-1)',
+      acceptLabel:s==='accepted'?'Undo accept':'Accept',flagLabel:s==='flagged'?'Remove flag':'Flag',
+      onSelect:()=>this.select(c.id),onAccept:e=>{e.stopPropagation();this.accept(c.id);},onFlag:e=>{e.stopPropagation();this.flag(c.id);},
+      onNote:e=>{const v=e.target.value;this.setState(x=>({notes:{...x.notes,[c.id]:v}}));}};});
+    const cur=clauses.find(c=>c.id===st.sel)||clauses[0]||null;const curIdx=cur?vis.findIndex(c=>c.id===cur.id)+1:0;
+    const selSec=(CLAUSES.find(c=>c.id===st.sel)||{}).sec;
+    const sections=DOC.map(([n,text])=>{if(n==='h')return{isHeading:true,title:text};const c=CLAUSES.find(x=>x.sec===n);let bg='transparent',ring='none';
+      if(c){const h=HL[c.risk];bg=rst[c.id]==='accepted'?'var(--color-ink-25)':h[0];if(selSec===n){bg=h[1];ring='inset 0 0 0 1.5px '+h[2];}}
+      if(st.hover===n){bg='var(--color-cite-hl)';ring='inset 0 0 0 1.5px var(--color-cite-ring)';}
+      return{isPara:true,n,text,bg,ring,cursor:c?'pointer':'default',onClick:c?()=>this.setState({sel:c.id,rtab:'clauses',mSheet:true}):undefined};});
+    const counts={All:CLAUSES.length,High:2,Medium:3,Low:2,Unreviewed:CLAUSES.length-reviewed};
+    const filters=Object.keys(counts).map(k=>({...chip(k,st.filter===k,()=>this.setState({filter:k})),count:counts[k]}));
+    const hov=sec=>()=>this.setState({hover:sec});const out=()=>this.setState({hover:null});const goSec=sec=>()=>{if(mob)this.setState({mAsk:false});setTimeout(()=>this.scrollTo(sec),mob?50:0);};
+    const a=st.ans;const toks=a?a.toks.slice(0,st.shown).map(t=>t.cite?{isCite:true,n:t.n,sec:t.sec,onEnter:hov(t.sec),onLeave:out,onClick:goSec(t.sec)}:{isText:true,w:t.w}):[];
+    const done=!!a&&!st.askError&&st.shown>=a.toks.length;const rtab=mob?'ask':st.rtab;
+    const reviewReady=rdoc.status==='ready';
+    const nav=[['matters','Matters','briefcase'],['documents','Documents','file-text'],['settings','Settings','settings']].map(([k,l,ic])=>{const on=r===k||(k==='matters'&&(r==='matter'))||(k==='documents'&&r==='review');return{label:l,mask:mk(ic),bg:on?'var(--color-blue-50)':'transparent',color:on?'var(--color-blue-700)':'var(--color-ink-600)',onClick:()=>this.go(k)};});
+    const sys=r==='404'?{sysCode:'404',sysTitle:'We couldn’t find that page',sysBody:'The link may be out of date, or the matter may belong to another organization.',sysIcon:mk('file-question'),sysIconBg:'var(--color-blue-50)',sysIconFg:'var(--color-blue-600)'}:{sysCode:'Ref CF-7Q2X-91',sysTitle:'Something went wrong',sysBody:'We couldn’t load this page. Your work is saved. Try again, or quote the reference above if it keeps happening.',sysIcon:mk('cloud-off'),sysIconBg:'var(--color-risk-high-bg)',sysIconFg:'var(--color-risk-high)'};
+    const f=st.form;
+    return{...frame,...sys,isMobile:mob,isDesktop:!mob,
+      isSignin:r==='signin',isApp:['matters','matter','documents','settings','review'].includes(r),isFullPage:r==='404'||r==='error',isError:r==='error',
+      authTitle:signup?'Create your account':'Sign in to Casefile',authSub:signup?'Start reviewing contracts with your team.':'Welcome back. Pick up where you left off.',authCta:signup?'Create account':'Sign in',
+      authSwitchText:signup?'Already have an account?':'New to Casefile?',authSwitchCta:signup?'Sign in':'Create an account',
+      toggleAuth:()=>this.setState({authMode:signup?'signin':'signup'}),submitAuth:e=>{if(e&&e.preventDefault)e.preventDefault();this.go('matters');this.toast('success','Signed in as Maya Okafor');},
+      retryError:()=>this.go(st.errorFrom||'matters'),goMatters:()=>this.go('matters'),
+      // shell
+      showSidebar:!mob||st.drawer,sbFull:mob||r!=='review',sbWidth:!mob&&r==='review'?'64px':'252px',sbPad:!mob&&r==='review'?'calc(var(--spacing) * 4) calc(var(--spacing) * 2)':'calc(var(--spacing) * 4) calc(var(--spacing) * 3)',docMinW:mob?'0':'720px',drawer:mob&&st.drawer,sbPos:mob?'absolute':'relative',sbShadow:mob?'var(--shadow-3)':'none',
+      openDrawer:()=>this.setState({drawer:true}),closeDrawer:()=>this.setState({drawer:false,orgMenu:false,userMenu:false}),
+      orgName:org.name,orgIni:org.ini,orgSub:org.sub,orgMenu:st.orgMenu,toggleOrgMenu:()=>this.setState({orgMenu:!st.orgMenu,userMenu:false}),
+      orgs:ORGS.map(o=>({...o,isCurrent:o.id===st.org,onClick:()=>{if(o.id!==st.org){this.setState({org:o.id,page:1,q:'',fStatus:'All',fArea:'All'},()=>this.syncUrl());this.go('matters');this.toast('success','Switched to '+o.name);}else this.setState({orgMenu:false});}})),
+      userMenu:st.userMenu,toggleUserMenu:()=>this.setState({userMenu:!st.userMenu,orgMenu:false}),meName:me.name,meEmail:'maya@harlowlane.com',
+      demoSession:()=>this.setState({session:true,userMenu:false,drawer:false}),demo404:()=>this.go('404'),demoError:()=>this.go('error',{errorFrom:r}),signOut:()=>this.go('signin'),
+      nav,contentOverflow:r==='review'?'hidden':'auto',pagePad:mob?'calc(var(--spacing) * 5) calc(var(--spacing) * 4) calc(var(--spacing) * 8)':'calc(var(--spacing) * 8) calc(var(--spacing) * 8) calc(var(--spacing) * 12)',
+      q:st.q,onSearch:e=>{this.setFilters({q:e.target.value});if(st.route!=='matters')this.go('matters');},
+      // matters
+      isMatters:r==='matters',orgMatterCount:this.orgMatters().length,openNew:()=>this.setState({form:{mode:'new',name:'',client:'',area:'Commercial',status:'Open',errors:{}}}),
+      statusChips,areaChips,fArea:st.fArea,onArea:e=>this.setFilters({fArea:e.target.value}),hasFilters,clearFilters:clear,activeFilterCount,hasActiveFilterCount:activeFilterCount>0,
+      openFilterSheet:()=>this.setState({filterSheet:true}),closeFilterSheet:()=>this.setState({filterSheet:false}),filterSheet:mob&&st.filterSheet,resultCount:all.length,
+      listError:st.listError,listLoadingView:!st.listError&&st.listLoading,listEmpty:!st.listError&&!st.listLoading&&all.length===0,listReady:!st.listError&&!st.listLoading&&all.length>0,
+      retryList:()=>{this.setState({listError:false});this.setFilters({});},skeletons:[1,2,3,4,5],
+      cols,matterRows,rangeLabel:all.length?((page-1)*PAGE+1)+'–'+Math.min(page*PAGE,all.length)+' of '+all.length+' matters':'0 matters',pageLabel:'Page '+page+' of '+pages,
+      prevPage:()=>page>1&&this.setFilters({page:page-1}),nextPage:()=>page<pages&&this.setFilters({page:page+1}),prevColor:page>1?'var(--color-ink-700)':'var(--color-ink-300)',nextColor:page<pages?'var(--color-ink-700)':'var(--color-ink-300)',
+      // matter detail
+      isMatter:r==='matter',matterName:matter.name,matterClient:matter.client,matterArea:matter.area,...Object.fromEntries(Object.entries(stat(matter.status)).map(([k,v])=>['m'+k[0].toUpperCase()+k.slice(1),v])),
+      matterOwner:mo.name,matterOwnerIni:matter.owner,matterOwnerBg:mo.bg,matterOwnerFg:mo.fg,
+      openEdit:()=>this.setState({form:{mode:'edit',id:matter.id,name:matter.name,client:matter.client,area:matter.area,status:matter.status,errors:{}}}),
+      isDocsTab:st.tab==='docs',isActivityTab:st.tab==='activity',showDocsTab:()=>this.setState({tab:'docs'}),showActivityTab:()=>this.setState({tab:'activity'}),
+      docsTabBg:td.bg,docsTabColor:td.color,docsTabShadow:td.shadow,actTabBg:ta.bg,actTabColor:ta.color,actTabShadow:ta.shadow,docCount:mdocs.length,actCount:acts.length,
+      mdocs,hasDocs:mdocs.length>0,noDocs:mdocs.length===0,acts,docGrid:mob?'1fr':'minmax(220px,1fr) 160px minmax(190px,220px) 80px',
+      fileRef:this.fileRef,pickFile:()=>this.fileRef.current&&this.fileRef.current.click(),onFile:e=>{this.addFiles([...e.target.files]);e.target.value='';},
+      dropBorder:st.dragOver?'var(--color-blue-600)':'var(--color-blue-300)',dropBg:st.dragOver?'var(--color-blue-50)':'var(--color-blue-25)',
+      onDragOver:e=>{e.preventDefault();if(!st.dragOver)this.setState({dragOver:true});},onDragLeave:()=>this.setState({dragOver:false}),
+      onDrop:e=>{e.preventDefault();this.setState({dragOver:false});const fl=[...(e.dataTransfer?e.dataTransfer.files:[])];this.addFiles(fl.length?fl:[{name:'Dropped contract.pdf',size:400000}]);},
+      goMattersList:()=>this.go('matters'),
+      // documents & settings
+      isDocuments:r==='documents',orgDocs,isSettings:r==='settings',
+      members:ORG_PEOPLE[st.org].map(k=>({...av(k),ini:k,role:PEOPLE[k].role,email:PEOPLE[k].name.split(' ')[0].toLowerCase()+'@'+(st.org==='o1'?'harlowlane.com':'northgate.com')})),
+      invite:()=>this.toast('success','Invite sent'),
+      // review
+      isReview:r==='review',reviewReady,reviewWaiting:!reviewReady,rdocName:rdoc.name.replace(/\.(pdf|docx?)$/i,''),rdocMeta:rdoc.pages+' pages · Uploaded by '+av(rdoc.by).name+', '+fmt(rdoc.at).toLowerCase(),
+      rdocPct:Math.round(rdoc.progress)+'%',rdocFailed:rdoc.status==='failed',rdocBusy:rdoc.status!=='failed'&&!reviewReady,
+      backToMatter:()=>this.go('matter',{tab:'docs'}),
+      reviewed,total:CLAUSES.length,pctLabel:Math.round(reviewed/CLAUSES.length*100)+'%',docRef:this.docRef,sections,clauses,filters,noClauses:clauses.length===0,stop,
+      docPad:mob?'calc(var(--spacing) * 4) calc(var(--spacing) * 3) calc(var(--spacing) * 64)':'calc(var(--spacing) * 6) clamp(calc(var(--spacing) * 3),2.5vw,calc(var(--spacing) * 8))',paperPad:mob?'calc(var(--spacing) * 6) calc(var(--spacing) * 5) calc(var(--spacing) * 10)':'calc(var(--spacing) * 10) clamp(calc(var(--spacing) * 6),4vw,calc(var(--spacing) * 12)) calc(var(--spacing) * 12)',
+      showShortcuts:(this.props.showShortcuts??true)&&!mob,showRightPanel:!mob||st.mAsk,rpPos:mob?'absolute':'relative',rpWidth:mob?'100%':'clamp(340px,32vw,410px)',
+      isClausesTab:rtab==='clauses',isAskTab:rtab==='ask',clausesTabBg:rtab==='clauses'?'var(--color-ink-50)':'transparent',clausesTabColor:rtab==='clauses'?'var(--color-ink-900)':'var(--color-ink-500)',askTabBg:rtab==='ask'?'var(--color-blue-50)':'transparent',askTabColor:rtab==='ask'?'var(--color-blue-700)':'var(--color-ink-500)',
+      showClauses:()=>this.setState({rtab:'clauses'}),showAsk:()=>this.setState({rtab:'ask'}),openMobileAsk:()=>this.setState({mAsk:true}),closeMobileAsk:()=>this.setState({mAsk:false}),
+      suggestions:ANSWERS.map((x,i)=>({text:x.q,onClick:()=>this.ask(i)})),
+      noQuestion:!a,hasQuestion:!!a,question:a?a.q:'',tokens:toks,streaming:!!a&&!done&&!st.askError,answerDone:done,askError:st.askError,
+      retryAsk:()=>{this.askRetried=true;this.ask(a.i,a.q);},
+      sources:a?a.cites.map(c=>({n:c.n,sec:c.sec,title:TITLES[c.sec]||'',onClick:goSec(c.sec),onEnter:hov(c.sec),onLeave:out})):[],
+      copyLabel:st.copied?'Copied':'Copy',copy:()=>{try{navigator.clipboard.writeText(a.text);}catch(e){}this.setState({copied:true});setTimeout(()=>this.setState({copied:false}),1600);},
+      resetAsk:()=>{clearInterval(this.timer);this.setState({ans:null,shown:0,hover:null,askError:false});},
+      draft:st.draft,onDraft:e=>this.setState({draft:e.target.value}),
+      submitAsk:e=>{e.preventDefault();const d=st.draft;if(!d.trim())return;const l=d.toLowerCase();this.ask(/liab|cap/.test(l)?1:/renew/.test(l)?2:0,d);},
+      mSheet:mob&&reviewReady&&!!cur,cur:cur||{},curPos:curIdx+' of '+vis.length,prevClause:()=>this.step(-1),nextClause:()=>this.step(1),
+      // overlays
+      hasForm:!!f,formTitle:f&&f.mode==='edit'?'Edit matter':'New matter',formCta:f&&f.mode==='edit'?'Save changes':'Create matter',
+      fName:f?f.name:'',fClient:f?f.client:'',fAreaVal:f?f.area:'',fNameErr:f&&f.errors.name||'',fClientErr:f&&f.errors.client||'',hasNameErr:!!(f&&f.errors.name),hasClientErr:!!(f&&f.errors.client),
+      fNameBorder:f&&f.errors.name?'var(--color-risk-high)':'var(--color-ink-200)',fClientBorder:f&&f.errors.client?'var(--color-risk-high)':'var(--color-ink-200)',
+      onFName:this.setForm('name'),onFClient:this.setForm('client'),onFArea:this.setForm('area'),
+      formStatuses:STATUSES.map(s=>{const on=f&&f.status===s;return{label:s,bg:on?'var(--color-ink-0)':'transparent',color:on?'var(--color-ink-900)':'var(--color-ink-500)',shadow:on?'var(--shadow-1)':'none',onClick:()=>this.setForm('status')(s)};}),
+      saveForm:e=>this.saveForm(e),closeForm:()=>this.setState({form:null}),
+      hasConfirm:!!st.confirm,confirmTitle:st.confirm?st.confirm.title:'',confirmBody:st.confirm?st.confirm.body:'',confirmLabel:st.confirm?st.confirm.label:'',
+      doConfirm:()=>st.confirm&&st.confirm.fn(),closeConfirm:()=>this.setState({confirm:null}),
+      session:st.session,reauth:()=>{this.setState({session:false});this.toast('success','Signed in again. You’re back where you left off.');},
+      toasts:st.toasts.map(t=>({msg:t.msg,isSuccess:t.kind==='success',isError:t.kind==='error',hasAction:!!t.action,actionLabel:t.action?t.action.label:'',onAction:()=>{this.setState(s=>({toasts:s.toasts.filter(x=>x.id!==t.id)}));t.action&&t.action.fn();},onClose:()=>this.setState(s=>({toasts:s.toasts.filter(x=>x.id!==t.id)}))})),
+      toastAlign:mob?'center':'flex-end',toastBottom:mob&&r==='review'?'auto':'calc(var(--spacing) * 5)',toastTop:mob&&r==='review'?'calc(var(--spacing) * 16)':'auto',
+      stopProp:stop
+    };
+  }
+}
+</script>
+</body>
+</html>

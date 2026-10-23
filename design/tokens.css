@@ -1,0 +1,62 @@
+/* Casefile tokens. The body of :root is Tailwind 4 @theme-compatible — see theme.css. */
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700&family=Geist:wght@400;500;600&family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap");
+:root {
+  /* Colour — brand */
+  --color-blue-25:#F7F8FF; --color-blue-50:#EEF1FF; --color-blue-100:#DFE4FF; --color-blue-200:#C2CBFF; --color-blue-300:#98A6FF;
+  --color-blue-400:#6B7CFA; --color-blue-500:#5468F7; --color-blue-600:#3B4EEA; --color-blue-700:#2E3CC4; --color-blue-800:#262F99; --color-blue-900:#1F2670;
+  /* Colour — neutrals (ink-400: borders & icons only, never text) */
+  --color-ink-0:#FFFFFF; --color-ink-25:#FAFBFD; --color-ink-50:#F4F6FA; --color-ink-100:#ECEFF5; --color-ink-200:#DFE3EC; --color-ink-300:#C5CCDA;
+  --color-ink-400:#98A1B3; --color-ink-500:#646C7E; --color-ink-600:#4D5568; --color-ink-700:#353C4D; --color-ink-800:#222836; --color-ink-900:#121621;
+  /* Colour — risk (always paired with icon + label) */
+  --color-risk-high:#C8233F; --color-risk-high-bg:#FDECEF; --color-risk-high-border:#F6C9D1; --color-risk-high-on-dark:#FF8EA1;
+  --color-risk-high-hl:rgba(200,35,63,.08); --color-risk-high-hl-strong:rgba(200,35,63,.15); --color-risk-high-ring:rgba(200,35,63,.5);
+  --color-risk-med:#9F5B00; --color-risk-med-bg:#FFF3DC; --color-risk-med-border:#F5D9A6; --color-risk-med-strong:#6B3D00;
+  --color-risk-med-hl:rgba(214,140,0,.11); --color-risk-med-hl-strong:rgba(214,140,0,.2); --color-risk-med-ring:rgba(166,95,0,.5);
+  --color-risk-low:#0E7A57; --color-risk-low-bg:#E3F5EC; --color-risk-low-on-dark:#4ED6A0;
+  --color-risk-low-hl:rgba(14,122,87,.08); --color-risk-low-hl-strong:rgba(14,122,87,.15); --color-risk-low-ring:rgba(14,122,87,.45);
+  /* Colour — semantic */
+  --color-fg-strong:var(--color-ink-900); --color-fg-body:var(--color-ink-700); --color-fg-muted:var(--color-ink-500);
+  --color-fg-on-brand:#FFFFFF; --color-fg-on-brand-muted:rgba(255,255,255,.9);
+  --color-surface-page:var(--color-ink-50); --color-surface-card:var(--color-ink-0); --color-surface-sunken:var(--color-ink-25);
+  --color-border-subtle:#E6EAF2; --color-border-strong:var(--color-ink-300);
+  --color-action-primary:var(--color-blue-600); --color-action-primary-hover:var(--color-blue-700);
+  --color-action-danger:var(--color-risk-high); --color-action-danger-hover:#A81A33;
+  --color-cite-hl:rgba(59,78,234,.12); --color-cite-ring:rgba(59,78,234,.55); --color-scrim:rgba(18,22,33,.4);
+  /* Fonts */
+  --font-display:"Urbanist",system-ui,sans-serif; --font-ui:"Geist",system-ui,sans-serif;
+  --font-document:"Newsreader",Georgia,serif; --font-mono:"DM Mono",ui-monospace,monospace;
+  /* Type — 10 sizes, nothing below 12px */
+  --text-caption:12px; --text-caption--line-height:1.35; --text-caption--font-weight:500;
+  --text-ref:12px; --text-ref--line-height:1; --text-ref--font-weight:500;
+  --text-small:13px; --text-small--line-height:1.55; --text-small--font-weight:400;
+  --text-label:13px; --text-label--line-height:1.3; --text-label--font-weight:500;
+  --text-ui:14px; --text-ui--line-height:1.5; --text-ui--font-weight:400;
+  --text-body:15px; --text-body--line-height:1.6; --text-body--font-weight:400;
+  --text-lead:16.5px; --text-lead--line-height:1.3; --text-lead--font-weight:600;
+  --text-doc:16.5px; --text-doc--line-height:1.7; --text-doc--font-weight:400;
+  --text-h3:19px; --text-h3--line-height:1.35; --text-h3--font-weight:600;
+  --text-h2:26px; --text-h2--line-height:1.25; --text-h2--font-weight:600;
+  --text-title:30px; --text-title--line-height:1.15; --text-title--font-weight:600;
+  --text-h1:36px; --text-h1--line-height:1.15; --text-h1--font-weight:600;
+  --text-display:56px; --text-display--line-height:1.05; --text-display--font-weight:600;
+  /* Spacing — 4px base; use multiples 1,2,3,4,5,6,8,10,12,16 */
+  --spacing:4px;
+  /* Radius */
+  --radius-xs:6px; --radius-sm:8px; --radius-md:10px; --radius-lg:14px; --radius-xl:20px; --radius-pill:999px;
+  /* Shadows */
+  --shadow-1:0 1px 2px rgba(18,22,33,.05);
+  --shadow-2:0 1px 2px rgba(18,22,33,.04), 0 8px 24px -12px rgba(30,50,120,.16);
+  --shadow-3:0 2px 6px rgba(18,22,33,.05), 0 24px 48px -20px rgba(30,50,120,.28);
+  --shadow-float:0 30px 60px -28px rgba(12,36,120,.55);
+  --shadow-button:inset 0 1px 0 rgba(255,255,255,.22), 0 1px 2px rgba(30,40,140,.3);
+  --shadow-selected:0 0 0 3px #EEF1FF, 0 8px 24px -12px rgba(30,50,120,.2);
+  --shadow-sheet:0 -16px 40px -16px rgba(18,22,33,.3);
+  --shadow-brand-glow:0 12px 24px -12px rgba(59,78,234,.8);
+  --shadow-device:0 0 0 10px #121621, 0 40px 80px -30px rgba(18,22,33,.5);
+  --shadow-focus:0 0 0 3px rgba(59,78,234,.7);
+  /* Motion */
+  --ease-out:cubic-bezier(.22,.8,.24,1);
+  --duration-fast:120ms; --duration-base:200ms; --duration-slow:360ms;
+  /* Backdrop (not a Tailwind namespace — plain variable) */
+  --gradient-sky:radial-gradient(120% 60% at 15% 100%, rgba(255,255,255,.45) 0%, rgba(255,255,255,0) 55%), linear-gradient(180deg,#1B44B5 0%,#2C66D6 38%,#6FA2EC 76%,#B9D3F7 100%);
+}
