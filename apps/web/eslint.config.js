@@ -1,7 +1,7 @@
 import js from '@eslint/js'
 import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks' // keep as generated
-import reactRefresh from 'eslint-plugin-react-refresh' // keep as generated
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
 import jsxA11y from 'eslint-plugin-jsx-a11y'
 import betterTailwind from 'eslint-plugin-better-tailwindcss'
 import prettier from 'eslint-config-prettier'
@@ -16,8 +16,8 @@ export default defineConfig([
       js.configs.recommended,
       tseslint.configs.strictTypeChecked,
       tseslint.configs.stylisticTypeChecked,
-      reactHooks.configs.flat.recommended, // keep as generated
-      reactRefresh.configs.vite, // keep as generated
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
       jsxA11y.flatConfigs.strict,
     ],
     plugins: { 'better-tailwindcss': betterTailwind },
