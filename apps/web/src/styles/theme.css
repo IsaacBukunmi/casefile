@@ -147,8 +147,17 @@
   --duration-fast: 120ms;
   --duration-base: 200ms;
   --duration-slow: 360ms;
-  /* Backdrop (not a Tailwind namespace — plain variable) */
-  --gradient-sky:
-    radial-gradient(120% 60% at 15% 100%, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 55%),
-    linear-gradient(180deg, #1b44b5 0%, #2c66d6 38%, #6fa2ec 76%, #b9d3f7 100%);
+  /* Backdrop — deep ink with a document pattern: large outlined section number, ruled lines, margin rule.
+     Brand surfaces only (sign-in, system pages). White text ≥ 4.5:1 everywhere on it. */
+  --backdrop-brand:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='520' viewBox='0 0 640 520'%3E%3Cg font-family='Newsreader,Georgia,serif' fill='none' stroke='%23FFFFFF' stroke-opacity='.07' stroke-width='1.2'%3E%3Ctext x='584' y='300' text-anchor='end' font-size='300'%3E§ 7.1%3C/text%3E%3C/g%3E%3Cg font-family='Georgia,serif' fill='%23FFFFFF' fill-opacity='.045'%3E%3Ctext x='584' y='420' text-anchor='end' font-size='64'%3E§ 9.3%3C/text%3E%3Ctext x='584' y='490' text-anchor='end' font-size='40'%3E§ 12.1%3C/text%3E%3C/g%3E%3C/svg%3E")
+      right calc(var(--spacing) * 6) top 8% / min(640px, 88%) auto no-repeat,
+    linear-gradient(
+      90deg,
+      transparent 0 23px,
+      rgba(152, 166, 255, 0.24) 23px 24px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(180deg, transparent 0 31px, rgba(255, 255, 255, 0.045) 31px 32px),
+    linear-gradient(160deg, #1f2670 0%, #171c3f 55%, #121621 100%);
 }
