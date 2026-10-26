@@ -16,3 +16,5 @@ Contract review app for attorneys. Monorepo: `apps/web` (React), `apps/api` (Fas
 
 ## Commands
 - `pnpm dev` runs web (5173) and api (8000).
+- `pnpm typecheck`, `pnpm lint`, `pnpm format:check` must pass before any commit.
+- Tokens live in `apps/web/src/styles/theme.css`. Tailwind defaults are disabled, so only token classes exist.
