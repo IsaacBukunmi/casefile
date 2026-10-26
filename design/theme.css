@@ -1,18 +1,8 @@
 /* Tailwind CSS 4 entry. Same tokens as tokens.css. */
+@import url("https://fonts.googleapis.com/css2?family=Urbanist:wght@500;600;700&family=Geist:wght@400;500;600&family=DM+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap");
 @import "tailwindcss";
 
 @theme {
-  /* Only Casefile tokens exist. Remove Tailwind defaults. */
-  --color-*: initial;
-  --text-*: initial;
-  --radius-*: initial;
-  --shadow-*: initial;
-  --ease-*: initial;
-  --breakpoint-*: initial;
-  --breakpoint-md: 48rem;   /* 768px tablet */
-  --breakpoint-xl: 80rem;   /* 1280px desktop */
-  --default-font-family: var(--font-ui);
-  --default-mono-font-family: var(--font-mono);
   /* Colour — brand */
   --color-blue-25:#F7F8FF; --color-blue-50:#EEF1FF; --color-blue-100:#DFE4FF; --color-blue-200:#C2CBFF; --color-blue-300:#98A6FF;
   --color-blue-400:#6B7CFA; --color-blue-500:#5468F7; --color-blue-600:#3B4EEA; --color-blue-700:#2E3CC4; --color-blue-800:#262F99; --color-blue-900:#1F2670;
