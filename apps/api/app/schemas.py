@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import StrEnum
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class Schema(BaseModel):
@@ -40,3 +40,22 @@ class Matter(Schema):
     owner: Person  # models can nest; this becomes an object in the JSON
     document_count: int
     last_activity_at: datetime  # sent as an ISO 8601 string, e.g. "2026-10-27T09:30:00Z"
+
+
+class MatterSort(StrEnum):
+    NAME = "name"
+    CLIENT = "client"
+    STATUS = "status"
+    LAST_ACTIVITY = "last_activity"
+
+
+class SortOrder(StrEnum):
+    ASC = "asc"
+    DESC = "desc"
+
+
+class MatterPage(Schema):
+    items: list[Matter]
+    total: int = Field(description="Matters matching the filters, across all pages.")
+    page: int
+    page_size: int
