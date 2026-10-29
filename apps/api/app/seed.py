@@ -1,17 +1,24 @@
-from datetime import datetime, timedelta
+"""Fill the database with the prototype's sample data: `python -m app.seed`."""
 
-from app.schemas import MatterStatus, Person, PracticeArea
-from app.store import MatterRecord, Store
+from datetime import UTC, datetime, timedelta
+
+from sqlalchemy import delete
+from sqlalchemy.orm import Session
+
+from app import models
+from app.db import get_engine
+from app.schemas import MatterStatus, PracticeArea
 
 HARLOW = "org_harlow"
 NORTHGATE = "org_northgate"
 DEMO_USER = "usr_maya"
 
-PEOPLE = [
-    Person(id="usr_maya", name="Maya Okafor", initials="MO"),
-    Person(id="usr_daniel", name="Daniel Reyes", initials="DR"),
-    Person(id="usr_sana", name="Sana Kapoor", initials="SK"),
-    Person(id="usr_tom", name="Tom Becker", initials="TB"),
+# id, name, initials
+USERS = [
+    ("usr_maya", "Maya Okafor", "MO"),
+    ("usr_daniel", "Daniel Reyes", "DR"),
+    ("usr_sana", "Sana Kapoor", "SK"),
+    ("usr_tom", "Tom Becker", "TB"),
 ]
 
 # id, org, name, client, practice area, status, owner, minutes since last activity
@@ -31,19 +38,36 @@ MATTERS = [
 ]  # fmt: skip
 
 
-def build_store(now: datetime) -> Store:
-    store = Store()
-    store.people = {person.id: person for person in PEOPLE}
+def seed(session: Session, now: datetime) -> None:
+    # Children before parents: matters reference users, so they're deleted first.
+    session.execute(delete(models.Matter))
+    session.execute(delete(models.User))
 
-    for mid, org, name, client, area, status, owner, minutes_ago in MATTERS:
-        store.matters[mid] = MatterRecord(
+    session.add_all(
+        models.User(id=uid, name=name, initials=initials) for uid, name, initials in USERS
+    )
+    session.add_all(
+        models.Matter(
             id=mid,
             org_id=org,
             name=name,
             client=client,
-            practice_area=PracticeArea(area),  # converts the string, and fails loudly on a typo
+            practice_area=PracticeArea(area),
             status=MatterStatus(status),
             owner_id=owner,
             last_activity_at=now - timedelta(minutes=minutes_ago),
         )
-    return store
+        for mid, org, name, client, area, status, owner, minutes_ago in MATTERS
+    )
+
+
+def main() -> None:
+    engine = get_engine()
+    with Session(engine) as session:
+        seed(session, datetime.now(UTC))
+        session.commit()
+    print(f"Seeded {len(USERS)} users and {len(MATTERS)} matters into {engine.url.database}")
+
+
+if __name__ == "__main__":
+    main()
