@@ -81,6 +81,57 @@ class MatterPage(Schema):
     page_size: int
 
 
+class DocumentType(StrEnum):
+    PDF = "pdf"
+    DOCX = "docx"
+
+
+class AnalysisStatus(StrEnum):
+    ANALYSING = "analysing"
+    READY = "ready"
+    FAILED = "failed"
+
+
+class RiskCounts(Schema):
+    high: int
+    medium: int
+    low: int
+
+
+class Analysis(Schema):
+    status: AnalysisStatus
+    progress: int = Field(ge=0, le=100)
+    risk_counts: RiskCounts | None = Field(description="Present only when status is 'ready'.")
+
+
+class Document(Schema):
+    id: str
+    matter_id: str
+    name: str
+    file_type: DocumentType
+    pages: int
+    uploaded_by: Person
+    uploaded_at: datetime
+    analysis: Analysis
+
+
+class Paragraph(Schema):
+    ref: str = Field(description="Clause reference shown in the margin, e.g. '7.1'.")
+    text: str
+
+
+class Section(Schema):
+    number: str
+    title: str
+    paragraphs: list[Paragraph]
+
+
+class DocumentDetail(Document):
+    title: str
+    parties: str | None
+    sections: list[Section]
+
+
 class ErrorCode(StrEnum):
     BAD_REQUEST = "bad_request"
     UNAUTHORIZED = "unauthorized"

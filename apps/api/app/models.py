@@ -1,11 +1,24 @@
 import secrets
 from datetime import datetime
 from enum import StrEnum
+from typing import Any
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Index, MetaData, String, func
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Integer,
+    MetaData,
+    String,
+    func,
+    select,
+)
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import DeclarativeBase, Mapped, column_property, mapped_column, relationship
 
-from app.schemas import MatterStatus, PracticeArea
+from app.schemas import AnalysisStatus, DocumentType, MatterStatus, PracticeArea
 
 # Predictable names for indexes and constraints, so Alembic can find them in later migrations.
 NAMING_CONVENTION = {
@@ -47,6 +60,36 @@ class User(Base):
     initials: Mapped[str] = mapped_column(String(4))
 
 
+class Document(Base):
+    __tablename__ = "documents"
+    __table_args__ = (
+        CheckConstraint("analysis_progress BETWEEN 0 AND 100", name="analysis_progress_range"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    matter_id: Mapped[str] = mapped_column(ForeignKey("matters.id", ondelete="CASCADE"), index=True)
+    name: Mapped[str] = mapped_column(String(255))
+    file_type: Mapped[DocumentType] = mapped_column(str_enum(DocumentType, "document_type"))
+    pages: Mapped[int] = mapped_column(Integer)
+    uploaded_by_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
+    uploaded_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    analysis_status: Mapped[AnalysisStatus] = mapped_column(
+        str_enum(AnalysisStatus, "analysis_status")
+    )
+    analysis_progress: Mapped[int] = mapped_column(Integer, default=0)
+    # Written once when analysis finishes. Null while analysing or after a failure.
+    risk_high: Mapped[int | None] = mapped_column(Integer)
+    risk_medium: Mapped[int | None] = mapped_column(Integer)
+    risk_low: Mapped[int | None] = mapped_column(Integer)
+
+    # The extracted text, always read and written as a whole, so it's stored as one JSON value.
+    parties: Mapped[str | None] = mapped_column(String(500))
+    sections: Mapped[list[dict[str, Any]]] = mapped_column(JSONB, default=list)
+
+    uploaded_by: Mapped[User] = relationship()
+
+
 class Matter(Base):
     __tablename__ = "matters"
     __table_args__ = (Index("ix_matters_org_id_last_activity_at", "org_id", "last_activity_at"),)
@@ -60,5 +103,13 @@ class Matter(Base):
     owner_id: Mapped[str] = mapped_column(ForeignKey("users.id"))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     last_activity_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    # Not a column: a subquery that runs as part of every SELECT on matters.
+    document_count: Mapped[int] = column_property(
+        select(func.count(Document.id))
+        .where(Document.matter_id == id)
+        .correlate_except(Document)
+        .scalar_subquery()
+    )
 
     owner: Mapped[User] = relationship()

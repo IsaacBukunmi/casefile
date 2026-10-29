@@ -6,7 +6,7 @@ from sqlalchemy import text
 from app.config import get_settings
 from app.db import SessionDep
 from app.errors import register_error_handlers
-from app.routers import matters
+from app.routers import documents, matters
 
 
 def operation_id(route: APIRoute) -> str:
@@ -25,6 +25,7 @@ app.add_middleware(
 )
 register_error_handlers(app)
 app.include_router(matters.router)
+app.include_router(documents.router)
 
 
 @app.get("/health", tags=["meta"])

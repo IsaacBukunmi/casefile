@@ -21,7 +21,7 @@ def to_matter(row: models.Matter) -> schemas.Matter:
         practice_area=row.practice_area,
         status=row.status,
         owner=schemas.Person(id=row.owner.id, name=row.owner.name, initials=row.owner.initials),
-        document_count=0,  # becomes a real count once documents exist (3.8b)
+        document_count=row.document_count,
         last_activity_at=row.last_activity_at,
     )
 
