@@ -1,18 +1,21 @@
-from datetime import UTC, datetime
-from typing import Annotated
-
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import ColumnElement, case, func, or_, select, text
-from sqlalchemy.orm import Session, joinedload
+from fastapi.routing import APIRoute
+from sqlalchemy import text
 
-from app import models, schemas
 from app.config import get_settings
 from app.db import SessionDep
-from app.deps import OrgId, UserId
-from app.errors import ERROR_RESPONSES, NotFound, register_error_handlers
+from app.errors import register_error_handlers
+from app.routers import matters
 
-app = FastAPI(title="Casefile API", version="0.1.0")
+
+def operation_id(route: APIRoute) -> str:
+    # Name each operation after its function ("list_matters") instead of FastAPI's
+    # default ("list_matters_matters_get"). These names reach the generated TypeScript.
+    return route.name
+
+
+app = FastAPI(title="Casefile API", version="0.1.0", generate_unique_id_function=operation_id)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,140 +24,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 register_error_handlers(app)
-
-
-def to_matter(row: models.Matter) -> schemas.Matter:
-    return schemas.Matter(
-        id=row.id,
-        name=row.name,
-        client=row.client,
-        practice_area=row.practice_area,
-        status=row.status,
-        owner=schemas.Person(id=row.owner.id, name=row.owner.name, initials=row.owner.initials),
-        document_count=0,  # becomes a real count once documents exist (3.7)
-        last_activity_at=row.last_activity_at,
-    )
+app.include_router(matters.router)
 
 
 @app.get("/health", tags=["meta"])
 def health(session: SessionDep) -> dict[str, str]:
     session.execute(text("select 1"))
     return {"status": "ok", "database": "ok"}
-
-
-def matter_filters(
-    org_id: str,
-    q: str | None,
-    status: schemas.MatterStatus | None,
-    area: schemas.PracticeArea | None,
-) -> list[ColumnElement[bool]]:
-    conditions = [models.Matter.org_id == org_id]
-    if q:
-        # Escape the LIKE wildcards so a search for "50%" means the text "50%".
-        escaped = q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
-        pattern = f"%{escaped}%"
-        conditions.append(
-            or_(
-                models.Matter.name.ilike(pattern, escape="\\"),
-                models.Matter.client.ilike(pattern, escape="\\"),
-            )
-        )
-    if status:
-        conditions.append(models.Matter.status == status)
-    if area:
-        conditions.append(models.Matter.practice_area == area)
-    return conditions
-
-
-SORT_COLUMNS = {
-    schemas.MatterSort.NAME: func.lower(models.Matter.name),
-    schemas.MatterSort.CLIENT: func.lower(models.Matter.client),
-    # Sort statuses in workflow order (open, in review, closed), not alphabetically.
-    schemas.MatterSort.STATUS: case(
-        {"open": 0, "in_review": 1, "closed": 2}, value=models.Matter.status
-    ),
-    schemas.MatterSort.LAST_ACTIVITY: models.Matter.last_activity_at,
-}
-
-
-@app.get("/matters", tags=["matters"], responses=ERROR_RESPONSES)
-def list_matters(
-    session: SessionDep,
-    org_id: OrgId,
-    q: Annotated[str | None, Query(max_length=200, description="Search name or client")] = None,
-    status: schemas.MatterStatus | None = None,
-    practice_area: schemas.PracticeArea | None = None,
-    sort: schemas.MatterSort = schemas.MatterSort.LAST_ACTIVITY,
-    order: schemas.SortOrder = schemas.SortOrder.DESC,
-    page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1, le=100)] = 10,
-) -> schemas.MatterPage:
-    conditions = matter_filters(org_id, q, status, practice_area)
-
-    total = session.scalar(select(func.count()).select_from(models.Matter).where(*conditions))
-
-    sort_column = SORT_COLUMNS[sort]
-    direction = sort_column.desc() if order == schemas.SortOrder.DESC else sort_column.asc()
-    stmt = (
-        select(models.Matter)
-        .where(*conditions)
-        .options(joinedload(models.Matter.owner, innerjoin=True))
-        # The id tie-breaker keeps the order stable when two rows share a sort value,
-        # so a matter never appears on two pages or on none.
-        .order_by(direction, models.Matter.id)
-        .offset((page - 1) * page_size)
-        .limit(page_size)
-    )
-    return schemas.MatterPage(
-        items=[to_matter(row) for row in session.scalars(stmt)],
-        total=total or 0,
-        page=page,
-        page_size=page_size,
-    )
-
-
-def get_matter_row(session: Session, org_id: str, matter_id: str) -> models.Matter:
-    stmt = (
-        select(models.Matter)
-        .where(models.Matter.id == matter_id, models.Matter.org_id == org_id)
-        .options(joinedload(models.Matter.owner, innerjoin=True))
-    )
-    row = session.scalars(stmt).one_or_none()
-    if row is None:
-        raise NotFound("Matter")
-    return row
-
-
-@app.get("/matters/{matter_id}", tags=["matters"], responses=ERROR_RESPONSES)
-def get_matter(matter_id: str, session: SessionDep, org_id: OrgId) -> schemas.Matter:
-    return to_matter(get_matter_row(session, org_id, matter_id))
-
-
-@app.post("/matters", tags=["matters"], status_code=201, responses=ERROR_RESPONSES)
-def create_matter(
-    body: schemas.MatterCreate, session: SessionDep, org_id: OrgId, user_id: UserId
-) -> schemas.Matter:
-    row = models.Matter(
-        id=models.new_id("mat"),
-        org_id=org_id,
-        owner_id=user_id,
-        last_activity_at=datetime.now(UTC),
-        **body.model_dump(),
-    )
-    session.add(row)
-    session.commit()
-    return to_matter(row)
-
-
-@app.patch("/matters/{matter_id}", tags=["matters"], responses=ERROR_RESPONSES)
-def update_matter(
-    matter_id: str, body: schemas.MatterUpdate, session: SessionDep, org_id: OrgId
-) -> schemas.Matter:
-    row = get_matter_row(session, org_id, matter_id)
-    changes = body.model_dump(exclude_unset=True)
-    for field, value in changes.items():
-        setattr(row, field, value)
-    if changes:
-        row.last_activity_at = datetime.now(UTC)
-        session.commit()
-    return to_matter(row)
