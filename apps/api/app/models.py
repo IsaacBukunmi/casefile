@@ -1,3 +1,4 @@
+import secrets
 from datetime import datetime
 from enum import StrEnum
 
@@ -14,6 +15,11 @@ NAMING_CONVENTION = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
     "pk": "pk_%(table_name)s",
 }
+
+
+def new_id(prefix: str) -> str:
+    # e.g. "mat_3f9a1c2e": readable prefix + 8 random hex characters.
+    return f"{prefix}_{secrets.token_hex(4)}"
 
 
 class Base(DeclarativeBase):

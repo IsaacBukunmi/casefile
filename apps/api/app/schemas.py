@@ -1,7 +1,8 @@
 from datetime import datetime
 from enum import StrEnum
+from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import MISSING, BaseModel, ConfigDict, Field, StringConstraints
 
 
 class Schema(BaseModel):
@@ -40,6 +41,25 @@ class Matter(Schema):
     owner: Person  # models can nest; this becomes an object in the JSON
     document_count: int
     last_activity_at: datetime  # sent as an ISO 8601 string, e.g. "2026-10-27T09:30:00Z"
+
+
+# Trims surrounding spaces first, so "   " counts as empty and is rejected.
+Name = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+
+
+class MatterCreate(Schema):
+    name: Name
+    client: Name
+    practice_area: PracticeArea
+    status: MatterStatus = MatterStatus.OPEN
+
+
+class MatterUpdate(Schema):
+    # MISSING means "not sent": the field is optional, but null is never accepted.
+    name: Name | MISSING = MISSING
+    client: Name | MISSING = MISSING
+    practice_area: PracticeArea | MISSING = MISSING
+    status: MatterStatus | MISSING = MISSING
 
 
 class MatterSort(StrEnum):

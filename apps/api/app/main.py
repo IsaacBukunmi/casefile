@@ -1,14 +1,15 @@
+from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import ColumnElement, case, func, or_, select, text
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Session, joinedload
 
 from app import models, schemas
 from app.config import get_settings
 from app.db import SessionDep
-from app.deps import OrgId
+from app.deps import OrgId, UserId
 from app.errors import ERROR_RESPONSES, NotFound, register_error_handlers
 
 app = FastAPI(title="Casefile API", version="0.1.0")
@@ -112,8 +113,7 @@ def list_matters(
     )
 
 
-@app.get("/matters/{matter_id}", tags=["matters"], responses=ERROR_RESPONSES)
-def get_matter(matter_id: str, session: SessionDep, org_id: OrgId) -> schemas.Matter:
+def get_matter_row(session: Session, org_id: str, matter_id: str) -> models.Matter:
     stmt = (
         select(models.Matter)
         .where(models.Matter.id == matter_id, models.Matter.org_id == org_id)
@@ -122,4 +122,39 @@ def get_matter(matter_id: str, session: SessionDep, org_id: OrgId) -> schemas.Ma
     row = session.scalars(stmt).one_or_none()
     if row is None:
         raise NotFound("Matter")
+    return row
+
+
+@app.get("/matters/{matter_id}", tags=["matters"], responses=ERROR_RESPONSES)
+def get_matter(matter_id: str, session: SessionDep, org_id: OrgId) -> schemas.Matter:
+    return to_matter(get_matter_row(session, org_id, matter_id))
+
+
+@app.post("/matters", tags=["matters"], status_code=201, responses=ERROR_RESPONSES)
+def create_matter(
+    body: schemas.MatterCreate, session: SessionDep, org_id: OrgId, user_id: UserId
+) -> schemas.Matter:
+    row = models.Matter(
+        id=models.new_id("mat"),
+        org_id=org_id,
+        owner_id=user_id,
+        last_activity_at=datetime.now(UTC),
+        **body.model_dump(),
+    )
+    session.add(row)
+    session.commit()
+    return to_matter(row)
+
+
+@app.patch("/matters/{matter_id}", tags=["matters"], responses=ERROR_RESPONSES)
+def update_matter(
+    matter_id: str, body: schemas.MatterUpdate, session: SessionDep, org_id: OrgId
+) -> schemas.Matter:
+    row = get_matter_row(session, org_id, matter_id)
+    changes = body.model_dump(exclude_unset=True)
+    for field, value in changes.items():
+        setattr(row, field, value)
+    if changes:
+        row.last_activity_at = datetime.now(UTC)
+        session.commit()
     return to_matter(row)
