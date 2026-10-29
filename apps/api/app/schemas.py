@@ -59,3 +59,24 @@ class MatterPage(Schema):
     total: int = Field(description="Matters matching the filters, across all pages.")
     page: int
     page_size: int
+
+
+class ErrorCode(StrEnum):
+    BAD_REQUEST = "bad_request"
+    UNAUTHORIZED = "unauthorized"
+    FORBIDDEN = "forbidden"
+    NOT_FOUND = "not_found"
+    VALIDATION_ERROR = "validation_error"
+    INTERNAL_ERROR = "internal_error"
+
+
+class FieldError(Schema):
+    field: str = Field(description="Where the problem is, e.g. 'query.status' or 'body.name'.")
+    message: str
+
+
+class ApiError(Schema):
+    code: ErrorCode
+    message: str
+    reference: str = Field(description="Short code a user can quote to support, e.g. CF-4F1A-02.")
+    details: list[FieldError] | None = None

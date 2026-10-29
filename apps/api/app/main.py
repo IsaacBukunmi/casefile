@@ -9,6 +9,7 @@ from app import models, schemas
 from app.config import get_settings
 from app.db import SessionDep
 from app.deps import OrgId
+from app.errors import ERROR_RESPONSES, NotFound, register_error_handlers
 
 app = FastAPI(title="Casefile API", version="0.1.0")
 
@@ -18,6 +19,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+register_error_handlers(app)
 
 
 def to_matter(row: models.Matter) -> schemas.Matter:
@@ -74,7 +76,7 @@ SORT_COLUMNS = {
 }
 
 
-@app.get("/matters", tags=["matters"])
+@app.get("/matters", tags=["matters"], responses=ERROR_RESPONSES)
 def list_matters(
     session: SessionDep,
     org_id: OrgId,
@@ -108,3 +110,16 @@ def list_matters(
         page=page,
         page_size=page_size,
     )
+
+
+@app.get("/matters/{matter_id}", tags=["matters"], responses=ERROR_RESPONSES)
+def get_matter(matter_id: str, session: SessionDep, org_id: OrgId) -> schemas.Matter:
+    stmt = (
+        select(models.Matter)
+        .where(models.Matter.id == matter_id, models.Matter.org_id == org_id)
+        .options(joinedload(models.Matter.owner, innerjoin=True))
+    )
+    row = session.scalars(stmt).one_or_none()
+    if row is None:
+        raise NotFound("Matter")
+    return to_matter(row)
