@@ -6,6 +6,7 @@ from sqlalchemy import ColumnElement, case, func, or_, select
 from sqlalchemy.orm import Session, joinedload
 
 from app import models, schemas
+from app.activity import record_activity, to_person
 from app.db import SessionDep
 from app.deps import OrgId, UserId
 from app.errors import ERROR_RESPONSES, NotFound
@@ -20,7 +21,7 @@ def to_matter(row: models.Matter) -> schemas.Matter:
         client=row.client,
         practice_area=row.practice_area,
         status=row.status,
-        owner=schemas.Person(id=row.owner.id, name=row.owner.name, initials=row.owner.initials),
+        owner=to_person(row.owner),
         document_count=row.document_count,
         last_activity_at=row.last_activity_at,
     )
@@ -126,19 +127,44 @@ def create_matter(
         **body.model_dump(),
     )
     session.add(row)
+    record_activity(session, row, schemas.ActivityKind.CREATED, user_id, "created the matter")
     session.commit()
     return to_matter(row)
 
 
 @router.patch("/{matter_id}")
 def update_matter(
-    matter_id: str, body: schemas.MatterUpdate, session: SessionDep, org_id: OrgId
+    matter_id: str, body: schemas.MatterUpdate, session: SessionDep, org_id: OrgId, user_id: UserId
 ) -> schemas.Matter:
     row = get_matter_row(session, org_id, matter_id)
     changes = body.model_dump(exclude_unset=True)
     for field, value in changes.items():
         setattr(row, field, value)
     if changes:
-        row.last_activity_at = datetime.now(UTC)
+        record_activity(session, row, schemas.ActivityKind.EDITED, user_id, "edited the matter")
         session.commit()
     return to_matter(row)
+
+
+@router.get("/{matter_id}/activity")
+def list_matter_activity(
+    matter_id: str, session: SessionDep, org_id: OrgId
+) -> list[schemas.ActivityEvent]:
+    get_matter_row(session, org_id, matter_id)
+    stmt = (
+        select(models.ActivityEvent)
+        .where(models.ActivityEvent.matter_id == matter_id)
+        .options(joinedload(models.ActivityEvent.actor))
+        .order_by(models.ActivityEvent.occurred_at.desc(), models.ActivityEvent.id)
+    )
+    return [
+        schemas.ActivityEvent(
+            id=event.id,
+            matter_id=event.matter_id,
+            kind=event.kind,
+            actor=to_person(event.actor) if event.actor else None,
+            description=event.description,
+            occurred_at=event.occurred_at,
+        )
+        for event in session.scalars(stmt)
+    ]

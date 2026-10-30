@@ -132,6 +132,58 @@ class DocumentDetail(Document):
     sections: list[Section]
 
 
+class ReviewStatus(StrEnum):
+    UNREVIEWED = "unreviewed"
+    ACCEPTED = "accepted"
+    FLAGGED = "flagged"
+
+
+class Review(Schema):
+    status: ReviewStatus
+    note: str | None
+    reviewed_by: Person | None
+    reviewed_at: datetime | None
+
+
+class Clause(Schema):
+    id: str
+    document_id: str
+    section_ref: str
+    clause_type: str
+    risk: str
+    explanation: str
+    detail: str
+    suggested_revision: str | None
+    review: Review
+
+
+Note = Annotated[str, StringConstraints(strip_whitespace=True, max_length=2000)]
+
+
+class ReviewUpdate(Schema):
+    status: ReviewStatus
+    note: Note | MISSING = Field(default=MISSING, description="Only kept when status is 'flagged'.")
+
+
+class ActivityKind(StrEnum):
+    CREATED = "created"
+    EDITED = "edited"
+    UPLOADED = "uploaded"
+    ANALYSIS_READY = "analysis_ready"
+    ACCEPTED = "accepted"
+    FLAGGED = "flagged"
+    ASKED = "asked"
+
+
+class ActivityEvent(Schema):
+    id: str
+    matter_id: str
+    kind: ActivityKind
+    actor: Person | None = Field(description="Null for system events, such as finished analysis.")
+    description: str
+    occurred_at: datetime
+
+
 class ErrorCode(StrEnum):
     BAD_REQUEST = "bad_request"
     UNAUTHORIZED = "unauthorized"

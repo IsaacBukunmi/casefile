@@ -7,7 +7,14 @@ from sqlalchemy.orm import Session
 
 from app import models
 from app.db import get_engine
-from app.schemas import AnalysisStatus, DocumentType, MatterStatus, PracticeArea
+from app.schemas import (
+    ActivityKind,
+    AnalysisStatus,
+    DocumentType,
+    MatterStatus,
+    PracticeArea,
+    ReviewStatus,
+)
 
 HARLOW = "org_harlow"
 NORTHGATE = "org_northgate"
@@ -89,6 +96,55 @@ MSA_SECTIONS = [
 ]  # fmt: skip
 
 
+# The AI's findings for the Master Services Agreement, in document order:
+# id, section, clause type, risk, explanation, detail, suggested revision, review status
+MSA_CLAUSES = [
+    ("cls_1", "4.2", "Late payment interest", "med",
+     "Interest of 4% a month — roughly 48% a year, far above market.",
+     "Compounded monthly with no grace period. A single delayed invoice could grow quickly; courts may also treat this as a penalty.",
+     "Late payments accrue interest at 1% per month above the Bank of England base rate, after a 15-day grace period.",
+     "unreviewed"),
+    ("cls_2", "7.1", "Limitation of liability", "high",
+     "Your client’s liability is uncapped, while the supplier’s is limited to 3 months of fees.",
+     "The cap only protects the supplier. A product defect claim against your client could exceed the whole contract value.",
+     "Each party’s total aggregate liability shall not exceed the Fees paid in the twelve (12) months preceding the claim.",
+     "unreviewed"),
+    ("cls_3", "9.3", "Termination for convenience", "high",
+     "The supplier can walk away on 7 days’ notice. Your client has no equivalent right.",
+     "Seven days is too short to find a replacement packaging supplier and the right is one-sided.",
+     "Either party may terminate this Agreement for convenience by giving not less than sixty (60) days’ written notice.",
+     "unreviewed"),
+    ("cls_4", "10.1", "Indemnity", "med",
+     "Your client indemnifies the supplier even for the supplier’s own negligence.",
+     "“Howsoever arising” makes the indemnity very broad. Indemnities should follow fault.",
+     "Each party shall indemnify the other against losses to the extent caused by its breach of this Agreement or negligence.",
+     "unreviewed"),
+    ("cls_5", "12.1", "Automatic renewal", "med",
+     "Renews for 24 more months unless cancelled 90 days before the term ends.",
+     "Long renewal periods with an early notice window are easy to miss and lock the client in.",
+     "This Agreement renews for successive periods of twelve (12) months unless either party gives thirty (30) days’ notice.",
+     "unreviewed"),
+    ("cls_6", "13.2", "Confidentiality", "low",
+     "Standard mutual obligations lasting 3 years after termination.",
+     "Mutual and time-limited. In line with market practice for supply agreements.",
+     None, "accepted"),
+    ("cls_7", "15.1", "Governing law", "low",
+     "English law and courts — consistent with your client’s location.",
+     "No conflict with your client’s jurisdiction.",
+     None, "accepted"),
+]  # fmt: skip
+
+# Acme's history, as shown in the prototype: matter, kind, actor (None = system), text, minutes ago
+ACME_ACTIVITY = [
+    ("mat_1", "created", "usr_maya", "created the matter", 1440),
+    ("mat_1", "uploaded", "usr_maya", "uploaded Master Services Agreement.pdf", 120),
+    ("mat_1", "analysis_ready", None, "Analysis finished for Master Services Agreement.pdf", 115),
+    ("mat_1", "accepted", "usr_maya", "accepted § 13.2 Confidentiality", 95),
+    ("mat_1", "asked", "usr_daniel", "asked “Can we end this contract early?”", 60),
+    ("mat_1", "flagged", "usr_maya", "flagged § 7.1 Limitation of liability", 12),
+]
+
+
 def msa_sections() -> list[dict[str, object]]:
     return [
         {
@@ -101,7 +157,9 @@ def msa_sections() -> list[dict[str, object]]:
 
 
 def seed(session: Session, now: datetime) -> None:
-    # Children before parents: documents reference matters, which reference users.
+    # Children before parents: clauses -> documents -> matters -> users.
+    session.execute(delete(models.ActivityEvent))
+    session.execute(delete(models.Clause))
     session.execute(delete(models.Document))
     session.execute(delete(models.Matter))
     session.execute(delete(models.User))
@@ -144,6 +202,65 @@ def seed(session: Session, now: datetime) -> None:
         )
         for did, mid, name, ftype, pages, by, minutes_ago, status, progress, counts in DOCUMENTS
     )
+    session.flush()
+    session.add_all(
+        models.Clause(
+            id=cid,
+            document_id="doc_1",
+            position=position,
+            section_ref=section,
+            clause_type=ctype,
+            risk=risk,
+            explanation=explanation,
+            detail=detail,
+            suggested_revision=revision,
+            review_status=ReviewStatus(review),
+            reviewed_by_id="usr_maya" if review != "unreviewed" else None,
+            reviewed_at=now - timedelta(minutes=95) if review != "unreviewed" else None,
+        )
+        for position, (
+            cid,
+            section,
+            ctype,
+            risk,
+            explanation,
+            detail,
+            revision,
+            review,
+        ) in enumerate(MSA_CLAUSES)
+    )
+    _seed_activity(session, now)
+
+
+def _seed_activity(session: Session, now: datetime) -> None:
+    events = [
+        (mid, kind, actor, text, now - timedelta(minutes=minutes))
+        for mid, kind, actor, text, minutes in ACME_ACTIVITY
+    ]
+    # Every other matter gets a "created" event, plus one "uploaded" event per document.
+    for mid, _, _, _, _, _, owner, minutes_ago in MATTERS:
+        if mid == "mat_1":
+            continue
+        events.append(
+            (mid, "created", owner, "created the matter", now - timedelta(minutes=minutes_ago + 60))
+        )
+    for _, mid, name, _, _, by, minutes_ago, _, _, _ in DOCUMENTS:
+        if mid != "mat_1":
+            events.append(
+                (mid, "uploaded", by, f"uploaded {name}", now - timedelta(minutes=minutes_ago))
+            )
+
+    session.add_all(
+        models.ActivityEvent(
+            id=f"act_{index}",
+            matter_id=mid,
+            kind=ActivityKind(kind),
+            actor_id=actor,
+            description=text,
+            occurred_at=at,
+        )
+        for index, (mid, kind, actor, text, at) in enumerate(events, start=1)
+    )
 
 
 def main() -> None:
@@ -152,8 +269,8 @@ def main() -> None:
         seed(session, datetime.now(UTC))
         session.commit()
     print(
-        f"Seeded {len(USERS)} users, {len(MATTERS)} matters and {len(DOCUMENTS)} documents "
-        f"into {engine.url.database}"
+        f"Seeded {len(USERS)} users, {len(MATTERS)} matters, {len(DOCUMENTS)} documents "
+        f"and {len(MSA_CLAUSES)} clauses into {engine.url.database}"
     )
 
 

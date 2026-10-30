@@ -12,13 +12,21 @@ from sqlalchemy import (
     Integer,
     MetaData,
     String,
+    Text,
     func,
     select,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import DeclarativeBase, Mapped, column_property, mapped_column, relationship
 
-from app.schemas import AnalysisStatus, DocumentType, MatterStatus, PracticeArea
+from app.schemas import (
+    ActivityKind,
+    AnalysisStatus,
+    DocumentType,
+    MatterStatus,
+    PracticeArea,
+    ReviewStatus,
+)
 
 # Predictable names for indexes and constraints, so Alembic can find them in later migrations.
 NAMING_CONVENTION = {
@@ -113,3 +121,49 @@ class Matter(Base):
     )
 
     owner: Mapped[User] = relationship()
+
+
+class Clause(Base):
+    __tablename__ = "clauses"
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    document_id: Mapped[str] = mapped_column(
+        ForeignKey("documents.id", ondelete="CASCADE"), index=True
+    )
+    # Order within the document. Sorting by section_ref as text would put "10.1" before "4.2".
+    position: Mapped[int] = mapped_column(Integer)
+    section_ref: Mapped[str] = mapped_column(String(16))
+    clause_type: Mapped[str] = mapped_column(String(100))
+    risk: Mapped[str] = mapped_column(String(16))
+    explanation: Mapped[str] = mapped_column(Text)
+    detail: Mapped[str] = mapped_column(Text)
+    suggested_revision: Mapped[str | None] = mapped_column(Text)
+
+    review_status: Mapped[ReviewStatus] = mapped_column(
+        str_enum(ReviewStatus, "review_status"), default=ReviewStatus.UNREVIEWED
+    )
+    review_note: Mapped[str | None] = mapped_column(Text)
+    reviewed_by_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    reviewed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    document: Mapped[Document] = relationship()
+    reviewed_by: Mapped[User | None] = relationship()
+
+
+class ActivityEvent(Base):
+    __tablename__ = "activity_events"
+    __table_args__ = (
+        Index("ix_activity_events_matter_id_occurred_at", "matter_id", "occurred_at"),
+    )
+
+    id: Mapped[str] = mapped_column(String(64), primary_key=True)
+    matter_id: Mapped[str] = mapped_column(ForeignKey("matters.id", ondelete="CASCADE"))
+    kind: Mapped[ActivityKind] = mapped_column(str_enum(ActivityKind, "activity_kind"))
+    actor_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"))
+    description: Mapped[str] = mapped_column(String(500))
+    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+    # Declaring this relationship tells SQLAlchemy that events depend on matters,
+    # so it always inserts pending matters before pending events.
+    matter: Mapped[Matter] = relationship()
+    actor: Mapped[User | None] = relationship()
