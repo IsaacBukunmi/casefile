@@ -18,34 +18,18 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "string",
-                  "maxLength": 200
-                },
-                {
-                  "type": "null"
-                }
-              ],
+              "type": "string",
+              "maxLength": 200,
               "description": "Search name or client",
               "title": "Q"
-            },
-            "description": "Search name or client"
+            }
           },
           {
             "name": "status",
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/MatterStatus"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Status"
+              "$ref": "#/components/schemas/MatterStatus"
             }
           },
           {
@@ -53,15 +37,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/PracticeArea"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Practice Area"
+              "$ref": "#/components/schemas/PracticeArea"
             }
           },
           {

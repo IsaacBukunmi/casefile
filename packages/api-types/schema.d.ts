@@ -422,10 +422,9 @@ export interface operations {
     list_matters: {
         parameters: {
             query?: {
-                /** @description Search name or client */
-                q?: string | null;
-                status?: components["schemas"]["MatterStatus"] | null;
-                practice_area?: components["schemas"]["PracticeArea"] | null;
+                q?: string;
+                status?: components["schemas"]["MatterStatus"];
+                practice_area?: components["schemas"]["PracticeArea"];
                 sort?: components["schemas"]["MatterSort"];
                 order?: components["schemas"]["SortOrder"];
                 page?: number;

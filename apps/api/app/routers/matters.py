@@ -2,6 +2,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import APIRouter, Query
+from pydantic import MISSING
 from sqlalchemy import ColumnElement, case, func, or_, select
 from sqlalchemy.orm import Session, joinedload
 
@@ -27,16 +28,11 @@ def to_matter(row: models.Matter) -> schemas.Matter:
     )
 
 
-def matter_filters(
-    org_id: str,
-    q: str | None,
-    status: schemas.MatterStatus | None,
-    area: schemas.PracticeArea | None,
-) -> list[ColumnElement[bool]]:
+def matter_filters(org_id: str, params: schemas.MatterListParams) -> list[ColumnElement[bool]]:
     conditions = [models.Matter.org_id == org_id]
-    if q:
+    if params.q is not MISSING and params.q:
         # Escape the LIKE wildcards so a search for "50%" means the text "50%".
-        escaped = q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        escaped = params.q.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
         pattern = f"%{escaped}%"
         conditions.append(
             or_(
@@ -44,10 +40,10 @@ def matter_filters(
                 models.Matter.client.ilike(pattern, escape="\\"),
             )
         )
-    if status:
-        conditions.append(models.Matter.status == status)
-    if area:
-        conditions.append(models.Matter.practice_area == area)
+    if params.status is not MISSING:
+        conditions.append(models.Matter.status == params.status)
+    if params.practice_area is not MISSING:
+        conditions.append(models.Matter.practice_area == params.practice_area)
     return conditions
 
 
@@ -64,22 +60,15 @@ SORT_COLUMNS = {
 
 @router.get("")
 def list_matters(
-    session: SessionDep,
-    org_id: OrgId,
-    q: Annotated[str | None, Query(max_length=200, description="Search name or client")] = None,
-    status: schemas.MatterStatus | None = None,
-    practice_area: schemas.PracticeArea | None = None,
-    sort: schemas.MatterSort = schemas.MatterSort.LAST_ACTIVITY,
-    order: schemas.SortOrder = schemas.SortOrder.DESC,
-    page: Annotated[int, Query(ge=1)] = 1,
-    page_size: Annotated[int, Query(ge=1, le=100)] = 10,
+    params: Annotated[schemas.MatterListParams, Query()], session: SessionDep, org_id: OrgId
 ) -> schemas.MatterPage:
-    conditions = matter_filters(org_id, q, status, practice_area)
+    conditions = matter_filters(org_id, params)
 
     total = session.scalar(select(func.count()).select_from(models.Matter).where(*conditions))
 
-    sort_column = SORT_COLUMNS[sort]
-    direction = sort_column.desc() if order == schemas.SortOrder.DESC else sort_column.asc()
+    sort_column = SORT_COLUMNS[params.sort]
+    descending = params.order == schemas.SortOrder.DESC
+    direction = sort_column.desc() if descending else sort_column.asc()
     stmt = (
         select(models.Matter)
         .where(*conditions)
@@ -87,14 +76,14 @@ def list_matters(
         # The id tie-breaker keeps the order stable when two rows share a sort value,
         # so a matter never appears on two pages or on none.
         .order_by(direction, models.Matter.id)
-        .offset((page - 1) * page_size)
-        .limit(page_size)
+        .offset((params.page - 1) * params.page_size)
+        .limit(params.page_size)
     )
     return schemas.MatterPage(
         items=[to_matter(row) for row in session.scalars(stmt)],
         total=total or 0,
-        page=page,
-        page_size=page_size,
+        page=params.page,
+        page_size=params.page_size,
     )
 
 

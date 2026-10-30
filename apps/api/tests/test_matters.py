@@ -67,6 +67,13 @@ def test_invalid_query_returns_validation_errors(client: TestClient) -> None:
     assert {d["field"] for d in response.json()["details"]} == {"query.status", "query.page"}
 
 
+def test_misspelt_query_parameter_is_rejected(client: TestClient) -> None:
+    response = client.get("/matters", params={"stauts": "open"})
+
+    assert response.status_code == 422
+    assert response.json()["details"][0]["field"] == "query.stauts"
+
+
 def test_matter_in_another_org_is_not_found(client: TestClient) -> None:
     response = client.get("/matters/mat_10")
 

@@ -74,6 +74,20 @@ class SortOrder(StrEnum):
     DESC = "desc"
 
 
+class MatterListParams(Schema):
+    # Query parameters as one model: MISSING keeps the optional filters non-nullable, and
+    # extra="forbid" (from Schema) turns a misspelt parameter into a 422, not a silent no-op.
+    q: Annotated[str, Field(max_length=200, description="Search name or client")] | MISSING = (
+        MISSING
+    )
+    status: MatterStatus | MISSING = MISSING
+    practice_area: PracticeArea | MISSING = MISSING
+    sort: MatterSort = MatterSort.LAST_ACTIVITY
+    order: SortOrder = SortOrder.DESC
+    page: Annotated[int, Field(ge=1)] = 1
+    page_size: Annotated[int, Field(ge=1, le=100)] = 10
+
+
 class MatterPage(Schema):
     items: list[Matter]
     total: int = Field(description="Matters matching the filters, across all pages.")
