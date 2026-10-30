@@ -8,6 +8,7 @@
       "format": "uv run ruff format . && uv run ruff check --fix .",
       "db:migrate": "uv run alembic upgrade head",
       "db:revision": "uv run alembic revision --autogenerate -m",
-      "db:seed": "uv run python -m app.seed"
+      "db:seed": "uv run python -m app.seed",
+      "export-openapi": "uv run python -m app.export_openapi ../../packages/api-types/openapi.json"
     }
   }

@@ -10,6 +10,7 @@
         "lint": "pnpm -r lint",
         "test": "pnpm -r test",
         "format:check": "pnpm --filter web format:check",
-        "format": "pnpm -r format"
+        "format": "pnpm -r format",
+        "gen:api": "pnpm --filter api export-openapi && pnpm --filter @casefile/api-types gen"
     }
 }

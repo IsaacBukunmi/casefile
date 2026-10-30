@@ -202,4 +202,4 @@ class ApiError(Schema):
     code: ErrorCode
     message: str
     reference: str = Field(description="Short code a user can quote to support, e.g. CF-4F1A-02.")
-    details: list[FieldError] | None = None
+    details: list[FieldError] | None
