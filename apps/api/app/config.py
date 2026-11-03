@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,16 @@ class Settings(BaseSettings):
 
     database_url: str
     cors_origins: list[str] = ["http://localhost:5173"]
+
+    clerk_issuer: str
+    clerk_jwt_key: str
+    clerk_authorized_parties: list[str] = ["http://localhost:5173"]
+
+    @field_validator("clerk_jwt_key")
+    @classmethod
+    def restore_newlines(cls, value: str) -> str:
+        # Env vars are single lines, so the PEM key's line breaks are written as "\n".
+        return value.replace("\\n", "\n")
 
 
 @lru_cache

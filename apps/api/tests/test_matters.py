@@ -5,6 +5,7 @@ from fastapi.testclient import TestClient
 from app.deps import get_org_id
 from app.main import app
 from app.seed import NORTHGATE
+from tests.tokens import auth_header, make_token
 
 
 def ids(response_json: dict[str, object]) -> list[str]:
@@ -83,7 +84,7 @@ def test_matter_in_another_org_is_not_found(client: TestClient) -> None:
 
 
 def test_the_other_org_sees_only_its_own_matters(client: TestClient) -> None:
-    app.dependency_overrides[get_org_id] = lambda: NORTHGATE
+    client.headers.update(auth_header(make_token(org_id=NORTHGATE)))
 
     assert client.get("/matters").json()["total"] == 3
     assert client.get("/matters/mat_1").status_code == 404
