@@ -16,6 +16,11 @@ class Settings(BaseSettings):
     clerk_jwt_key: str
     clerk_authorized_parties: list[str] = ["http://localhost:5173"]
 
+    # The seed's two sample firms, mapped to real Clerk organization IDs so that signing in to
+    # one of those orgs shows its sample matters. The defaults keep tests self-contained.
+    seed_harlow_org_id: str = "org_harlow"
+    seed_northgate_org_id: str = "org_northgate"
+
     @field_validator("clerk_jwt_key")
     @classmethod
     def restore_newlines(cls, value: str) -> str:

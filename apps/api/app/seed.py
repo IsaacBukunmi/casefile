@@ -6,6 +6,7 @@ from sqlalchemy import delete
 from sqlalchemy.orm import Session
 
 from app import models
+from app.config import get_settings
 from app.db import get_engine
 from app.schemas import (
     ActivityKind,
@@ -156,7 +157,9 @@ def msa_sections() -> list[dict[str, object]]:
     ]
 
 
-def seed(session: Session, now: datetime) -> None:
+def seed(session: Session, now: datetime, org_ids: dict[str, str] | None = None) -> None:
+    # org_ids maps the placeholder orgs ("org_harlow") to real ones; unmapped IDs stay as they are.
+    real_org = (org_ids or {}).get
     # Children before parents: clauses -> documents -> matters -> users.
     session.execute(delete(models.ActivityEvent))
     session.execute(delete(models.Clause))
@@ -170,7 +173,7 @@ def seed(session: Session, now: datetime) -> None:
     session.add_all(
         models.Matter(
             id=mid,
-            org_id=org,
+            org_id=real_org(org, org),
             name=name,
             client=client,
             practice_area=PracticeArea(area),
@@ -266,7 +269,12 @@ def _seed_activity(session: Session, now: datetime) -> None:
 def main() -> None:
     engine = get_engine()
     with Session(engine) as session:
-        seed(session, datetime.now(UTC))
+        settings = get_settings()
+        org_ids = {
+            HARLOW: settings.seed_harlow_org_id,
+            NORTHGATE: settings.seed_northgate_org_id,
+        }
+        seed(session, datetime.now(UTC), org_ids)
         session.commit()
     print(
         f"Seeded {len(USERS)} users, {len(MATTERS)} matters, {len(DOCUMENTS)} documents "
