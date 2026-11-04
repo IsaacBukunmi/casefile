@@ -15,6 +15,8 @@ logger = logging.getLogger("casefile.api")
 
 # Documents the error responses in the OpenAPI schema, so generated types know their shape.
 ERROR_RESPONSES: dict[int | str, dict[str, object]] = {
+    401: {"model": ApiError, "description": "Missing or invalid session"},
+    403: {"model": ApiError, "description": "No active organization"},
     404: {"model": ApiError, "description": "Not found"},
     422: {"model": ApiError, "description": "Validation error"},
     500: {"model": ApiError, "description": "Unexpected error"},
@@ -36,6 +38,16 @@ class ApiException(Exception):
         self.status_code = status_code
         self.code = code
         self.message = message
+
+
+class Unauthorized(ApiException):
+    def __init__(self, message: str) -> None:
+        super().__init__(401, ErrorCode.UNAUTHORIZED, message)
+
+
+class Forbidden(ApiException):
+    def __init__(self, message: str) -> None:
+        super().__init__(403, ErrorCode.FORBIDDEN, message)
 
 
 class NotFound(ApiException):

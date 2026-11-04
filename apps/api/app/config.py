@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,6 +11,21 @@ class Settings(BaseSettings):
 
     database_url: str
     cors_origins: list[str] = ["http://localhost:5173"]
+
+    clerk_issuer: str
+    clerk_jwt_key: str
+    clerk_authorized_parties: list[str] = ["http://localhost:5173"]
+
+    # The seed's two sample firms, mapped to real Clerk organization IDs so that signing in to
+    # one of those orgs shows its sample matters. The defaults keep tests self-contained.
+    seed_harlow_org_id: str = "org_harlow"
+    seed_northgate_org_id: str = "org_northgate"
+
+    @field_validator("clerk_jwt_key")
+    @classmethod
+    def restore_newlines(cls, value: str) -> str:
+        # Env vars are single lines, so the PEM key's line breaks are written as "\n".
+        return value.replace("\\n", "\n")
 
 
 @lru_cache

@@ -1,10 +1,14 @@
 import os
 
-# Point the app at the test database before any app module reads its settings.
+# Configure the test database and test Clerk key before any app module reads its settings.
 TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL", "postgresql+psycopg://casefile:casefile@localhost:5432/casefile_test"
 )
 os.environ["DATABASE_URL"] = TEST_DATABASE_URL
+
+from tests.tokens import auth_header, configure_test_auth, make_token
+
+configure_test_auth()
 
 from collections.abc import Iterator
 from datetime import UTC, datetime
@@ -56,6 +60,9 @@ def session(engine: Engine) -> Iterator[Session]:
 def client(session: Session) -> Iterator[TestClient]:
     # Endpoints receive the test's session instead of opening their own.
     app.dependency_overrides[get_session] = lambda: session
-    with TestClient(app, raise_server_exceptions=False) as test_client:
+    # Every request is signed in as Maya at Harlow & Lane unless a test says otherwise.
+    with TestClient(
+        app, raise_server_exceptions=False, headers=auth_header(make_token())
+    ) as test_client:
         yield test_client
     app.dependency_overrides.clear()
