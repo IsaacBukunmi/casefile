@@ -13,6 +13,7 @@ Contract review app for attorneys. Monorepo: `apps/web` (React), `apps/api` (Fas
 - TypeScript is strict. No `any`, no `@ts-ignore`, no non-null `!` without a comment explaining why.
 - Every feature ships with tests and loading, empty and error states.
 - If the API contract looks wrong, stop and say so. Don't work around it in the client.
+- `.env.example` files hold placeholders only. Real values go in `.env`, which git ignores.
 
 ## Commands
 - `pnpm dev` runs web (5173) and api (8000).
