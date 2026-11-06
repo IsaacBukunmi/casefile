@@ -12,7 +12,7 @@ class Schema(BaseModel):
 
 
 class MatterStatus(StrEnum):
-    OPEN = "open"
+    OPEN = "ope"
     IN_REVIEW = "in_review"
     CLOSED = "closed"
 
