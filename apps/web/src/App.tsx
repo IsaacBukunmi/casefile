@@ -7,7 +7,7 @@ export default function App() {
   return (
     <Show when="signed-in" fallback={<SignedOutScreen />}>
       <ApiAuth>
-        <main className="min-h-screen bg-surface-page p-[13px]">
+        <main className="min-h-screen bg-surface-page p-8">
           <header className="flex items-center justify-between gap-4">
             <OrganizationSwitcher hidePersonal />
             <UserButton />
