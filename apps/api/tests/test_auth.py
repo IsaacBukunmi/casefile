@@ -4,6 +4,8 @@ import jwt
 from cryptography.hazmat.primitives.asymmetric import rsa
 from fastapi.testclient import TestClient
 
+from app.auth import is_trusted_origin, verify_session_token
+from app.config import Settings, get_settings
 from app.main import app
 from tests.tokens import TEST_ISSUER, auth_header, make_token
 
@@ -102,3 +104,49 @@ def test_issuer_constant_matches_settings() -> None:
     from app.config import get_settings
 
     assert get_settings().clerk_issuer == TEST_ISSUER
+
+
+PREVIEW_PATTERN = r"https://casefile-web-[a-z0-9-]+-isaacbukunmis-projects\.vercel\.app"
+
+
+def preview_settings(pattern: str | None) -> Settings:
+    return get_settings().model_copy(update={"allowed_origin_regex": pattern})
+
+
+def test_preview_deployments_match_the_trusted_pattern() -> None:
+    settings = preview_settings(PREVIEW_PATTERN)
+
+    assert is_trusted_origin(
+        "https://casefile-web-git-feat-matters-isaacbukunmis-projects.vercel.app", settings
+    )
+    assert is_trusted_origin(
+        "https://casefile-web-k3x9z2abc-isaacbukunmis-projects.vercel.app", settings
+    )
+
+
+def test_lookalike_origins_are_not_trusted() -> None:
+    settings = preview_settings(PREVIEW_PATTERN)
+
+    assert not is_trusted_origin(
+        "https://casefile-web-x-isaacbukunmis-projects.vercel.app.evil.example", settings
+    )
+    assert not is_trusted_origin("https://casefile-web-x-someone-else.vercel.app", settings)
+    assert not is_trusted_origin(
+        "http://casefile-web-x-isaacbukunmis-projects.vercel.app", settings
+    )
+
+
+def test_without_a_pattern_only_listed_origins_are_trusted() -> None:
+    settings = preview_settings(None)
+
+    assert is_trusted_origin("http://localhost:5173", settings)
+    assert not is_trusted_origin(
+        "https://casefile-web-git-feat-matters-isaacbukunmis-projects.vercel.app", settings
+    )
+
+
+def test_token_from_a_preview_deployment_is_accepted() -> None:
+    preview = "https://casefile-web-git-feat-matters-isaacbukunmis-projects.vercel.app"
+    claims = verify_session_token(make_token(azp=preview), preview_settings(PREVIEW_PATTERN))
+
+    assert claims.sub == "usr_maya"
