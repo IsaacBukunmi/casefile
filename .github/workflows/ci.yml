@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same branch cancels the run that's still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  api:
+    name: API · lint and tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: casefile
+          POSTGRES_PASSWORD: casefile
+          POSTGRES_DB: casefile_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U casefile -d casefile_test"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+
+    env:
+      TEST_DATABASE_URL: postgresql+psycopg://casefile:casefile@localhost:5432/casefile_test
+      # Alembic reads the app's settings. The tests set their own Clerk values,
+      # so these placeholders only satisfy the migration steps.
+      DATABASE_URL: postgresql+psycopg://casefile:casefile@localhost:5432/casefile_test
+      CLERK_ISSUER: unused-in-ci
+      CLERK_JWT_KEY: unused-in-ci
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          working-directory: apps/api
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+
+      - name: Install dependencies
+        run: uv sync --locked
+
+      - name: Lint
+        run: uv run ruff check .
+
+      - name: Check formatting
+        run: uv run ruff format --check .
+
+      - name: Apply migrations
+        run: uv run alembic upgrade head
+
+      - name: Check models match migrations
+        run: uv run alembic check
+
+      - name: Test
+        run: uv run pytest
+
+  web:
+    name: Web · types, lint and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: pnpm/action-setup@v6.1.1
+
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - uses: astral-sh/setup-uv@v10.3.3
+        with:
+          working-directory: apps/api
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+
+      - name: Install dependencies
+        run: |
+          pnpm install --frozen-lockfile
+          uv sync --locked --directory apps/api
+
+      - name: Check generated API types are up to date
+        run: |
+          pnpm gen:api
+          git diff --exit-code -- packages/api-types || {
+            echo "::error::packages/api-types is out of date. Run 'pnpm gen:api' and commit the result."
+            exit 1
+          }
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm --filter web lint
+
+      - name: Check formatting
+        run: pnpm format:check
+
+      - name: Build
+        run: pnpm build
