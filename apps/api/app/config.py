@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     clerk_issuer: str
     clerk_jwt_key: str
     clerk_authorized_parties: list[str] = ["http://localhost:5173"]
+    allowed_origin_regex: str | None = None
 
     # The seed's two sample firms, mapped to real Clerk organization IDs so that signing in to
     # one of those orgs shows its sample matters. The defaults keep tests self-contained.

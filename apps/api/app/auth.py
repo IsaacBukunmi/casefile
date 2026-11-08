@@ -1,5 +1,6 @@
 """Verifies Clerk session tokens locally, with Clerk's public key (no network call per request)."""
 
+import re
 from typing import Annotated
 
 import jwt
@@ -42,6 +43,14 @@ class Principal(BaseModel):
     email: str | None
 
 
+def is_trusted_origin(origin: str, settings: Settings) -> bool:
+    if origin in settings.clerk_authorized_parties:
+        return True
+    pattern = settings.allowed_origin_regex
+    # fullmatch: the whole origin must match, so "https://evil.example/x.vercel.app" can't sneak in.
+    return pattern is not None and re.fullmatch(pattern, origin) is not None
+
+
 def verify_session_token(token: str, settings: Settings) -> SessionClaims:
     try:
         payload = jwt.decode(
@@ -59,7 +68,7 @@ def verify_session_token(token: str, settings: Settings) -> SessionClaims:
 
     # The token must have been requested by one of our own frontends.
     azp = payload.get("azp")
-    if azp is not None and azp not in settings.clerk_authorized_parties:
+    if azp is not None and not is_trusted_origin(azp, settings):
         raise Unauthorized("Your session is not valid for this app.")
 
     try:

@@ -17,12 +17,15 @@ def operation_id(route: APIRoute) -> str:
 
 app = FastAPI(title="Casefile API", version="0.1.0", generate_unique_id_function=operation_id)
 
+settings = get_settings()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=get_settings().cors_origins,
+    allow_origins=settings.cors_origins,
+    allow_origin_regex=settings.allowed_origin_regex,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 register_error_handlers(app)
 app.include_router(matters.router)
 app.include_router(documents.router)
