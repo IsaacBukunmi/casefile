@@ -106,7 +106,7 @@ def test_issuer_constant_matches_settings() -> None:
     assert get_settings().clerk_issuer == TEST_ISSUER
 
 
-PREVIEW_PATTERN = r"https://casefile-web-[a-z0-9-]+-isaacbukunmis-projects\.vercel\.app"
+PREVIEW_PATTERN = r"https://casefile-[a-z0-9-]+-isaacbukunmis-projects\.vercel\.app"
 
 
 def preview_settings(pattern: str | None) -> Settings:
