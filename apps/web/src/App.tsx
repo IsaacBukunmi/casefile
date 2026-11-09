@@ -12,7 +12,7 @@ export default function App() {
             <OrganizationSwitcher hidePersonal />
             <UserButton />
           </header>
-          <h1 className="mt-8 font-display text-h1 text-fg-strong">Casefile</h1>
+          <h1 className="mt-8 font-display text-h1 text-fg-strong">Casefile v1</h1>
           <div className="mt-2">
             <ConnectionCheck />
           </div>
