@@ -120,7 +120,7 @@ def test_preview_deployments_match_the_trusted_pattern() -> None:
         "https://casefile-web-git-feat-matters-isaacbukunmis-projects.vercel.app", settings
     )
     assert is_trusted_origin(
-        "https://casefile-web-k3x9z2abc-isaacbukunmis-projects.vercel.app", settings
+        "https://casefile-14ssj63je-isaacbukunmis-projects.vercel.app", settings
     )
 
 
