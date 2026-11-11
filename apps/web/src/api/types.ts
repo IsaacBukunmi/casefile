@@ -1,4 +1,4 @@
-import type { components } from '@casefile/api-types'
+import type { components, operations } from '@casefile/api-types'
 
 type Schemas = components['schemas']
 
@@ -10,8 +10,13 @@ export type DocumentDetail = Schemas['DocumentDetail']
 export type Matter = Schemas['Matter']
 export type MatterCreate = Schemas['MatterCreate']
 export type MatterPage = Schemas['MatterPage']
+export type MatterSort = Schemas['MatterSort']
 export type MatterStatus = Schemas['MatterStatus']
 export type MatterUpdate = Schemas['MatterUpdate']
 export type PracticeArea = Schemas['PracticeArea']
+export type Review = Schemas['Review']
 export type ReviewStatus = Schemas['ReviewStatus']
 export type ReviewUpdate = Schemas['ReviewUpdate']
+export type SortOrder = Schemas['SortOrder']
+
+export type MatterListQuery = NonNullable<operations['list_matters']['parameters']['query']>
