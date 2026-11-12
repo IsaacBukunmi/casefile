@@ -70,15 +70,15 @@ export function useUpdateMatter(matterId: string) {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (body: MatterUpdate) =>
-        unwrap(
-            api.PATCH('/matters/{matter_id}', { params: { path: { matter_id: matterId } }, body }),
-        ),
+      unwrap(
+        api.PATCH('/matters/{matter_id}', { params: { path: { matter_id: matterId } }, body }),
+      ),
     onSuccess: async (matter) => {
-        queryClient.setQueryData(keys.matter(orgId, matterId), matter)
-        await Promise.all([
-            queryClient.invalidateQueries({ queryKey: keys.matterLists(orgId) }),
-            queryClient.invalidateQueries({ queryKey: keys.matterActivity(orgId, matterId) }),
-        ])
+      queryClient.setQueryData(keys.matter(orgId, matterId), matter)
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: keys.matterLists(orgId) }),
+        queryClient.invalidateQueries({ queryKey: keys.matterActivity(orgId, matterId) }),
+      ])
     },
   })
 }
