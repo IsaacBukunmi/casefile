@@ -11,8 +11,6 @@ export function DocumentPage() {
   const clauses = useClauses(documentId)
   const review = useReviewClause(documentId)
 
-  console.log(clauses)
-
   if (isNotFound(doc.error)) return <NotFoundPage />
   if (doc.isError) return <QueryError error={doc.error} />
   if (doc.isPending) return <p className="text-body text-fg-muted">Loading document…</p>
