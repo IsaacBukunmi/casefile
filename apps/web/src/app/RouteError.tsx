@@ -1,4 +1,5 @@
 import { isRouteErrorResponse, Link, useRouteError } from 'react-router'
+import { ApiRequestError } from '@/api/errors'
 
 // Rendered by React Router when a route throws while rendering.
 export function RouteError() {
@@ -9,6 +10,7 @@ export function RouteError() {
   const title = isRouteErrorResponse(error)
     ? `${String(error.status)} ${error.statusText}`
     : 'Something went wrong'
+  const reference = error instanceof ApiRequestError ? error.body?.reference : undefined
 
   return (
     <div role="alert" className="mx-auto max-w-xl p-8">
@@ -17,6 +19,7 @@ export function RouteError() {
         Try again, or go back to your matters. If it keeps happening, let us know what you were
         doing.
       </p>
+      {reference && <p className="mt-2 text-small text-fg-muted">Reference: {reference}</p>}
       <Link to="/matters" className="mt-4 inline-block text-label text-action-primary">
         Back to matters
       </Link>
