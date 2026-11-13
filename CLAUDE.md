@@ -15,6 +15,16 @@ Contract review app for attorneys. Monorepo: `apps/web` (React), `apps/api` (Fas
 - If the API contract looks wrong, stop and say so. Don't work around it in the client.
 - `.env.example` files hold placeholders only. Real values go in `.env`, which git ignores.
 
+## Building UI
+- Match `design/Casefile App.dc.html`. Each screen is marked with an HTML comment (`<!-- MATTERS LIST -->`, `<!-- APP SHELL -->`). The prototype's inline styles show intent; translate them to token classes.
+- If a value can't be expressed with existing tokens (e.g. a grid template), add a named token or `@utility` in `theme.css` and mention it in the PR. Never use arbitrary values.
+- Icons: `lucide-react`, the same set the prototype uses. Decorative icons get `aria-hidden`.
+- Data comes only from the hooks in `src/api/` and `src/hooks/`. Don't call `api` directly from components, and don't add query keys outside `keys.ts`.
+- Components live in `src/components/` (shared) or next to their page. Pages stay thin.
+- Accessibility: real buttons and links, visible focus (`shadow-focus`), menus with correct ARIA and keyboard support (Escape closes, focus returns to the trigger).
+- Tests: integration tests with `renderApp(url)` from `src/test/render.tsx`, finding elements by role, label or text. The API is mocked with schema-typed MSW handlers in `src/test/server.ts`; Clerk is faked in `src/test/clerk.tsx` (extend it there when you use a new Clerk export).
+- Out of scope unless asked: mobile layouts (Step 10), screens without a route.
+
 ## Commands
 - `pnpm dev` runs web (5173) and api (8000).
 - `pnpm typecheck`, `pnpm lint`, `pnpm format:check` must pass before any commit.

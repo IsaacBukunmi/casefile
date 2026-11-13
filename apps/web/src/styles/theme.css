@@ -147,6 +147,20 @@
   --duration-fast: 120ms;
   --duration-base: 200ms;
   --duration-slow: 360ms;
+  /* Menus and popovers rise in slightly as they open (the prototype's cfIn). */
+  --animate-menu-in: menu-in 160ms var(--ease-out);
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  /* Display type: the wordmark's tight tracking. */
+  --tracking-display: -0.02em;
   /* Backdrop — deep ink with a document pattern: large outlined section number, ruled lines, margin rule.
      Brand surfaces only (sign-in, system pages). White text ≥ 4.5:1 everywhere on it. */
   --backdrop-brand:
