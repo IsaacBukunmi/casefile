@@ -57,10 +57,18 @@ export default defineConfig([
         },
       ],
 
+      // console.error stays for real failures (RouteError); debug logging shouldn't ship.
+      'no-console': ['error', { allow: ['error'] }],
+
       // TypeScript strictness
       '@typescript-eslint/consistent-type-imports': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
     },
+  },
+  {
+    // Test helpers never hot-reload, so the fast-refresh export rule doesn't apply.
+    files: ['src/test/**', 'src/**/*.test.{ts,tsx}'],
+    rules: { 'react-refresh/only-export-components': 'off' },
   },
   prettier,
 ])

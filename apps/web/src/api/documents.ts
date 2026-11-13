@@ -88,14 +88,16 @@ export function useReviewClause(documentId: string) {
       // Roll back only this clause, so other reviews still in flight keep their changes.
       if (context?.previous) setReview(clauseId, context.previous)
     },
-    onSettled: async () => {
+    // Not awaited: the mutation would stay pending until the refetch finished, which would
+    // hold back the error message after a rollback.
+    onSettled: () => {
       // With several reviews in flight, refetch once after the last one, so an earlier
       // response can't overwrite a later optimistic change.
       if (queryClient.isMutating({ mutationKey }) === 1) {
-        await queryClient.invalidateQueries({ queryKey: clausesKey })
+        void queryClient.invalidateQueries({ queryKey: clausesKey })
       }
       // A review adds an activity event and updates the matter's last activity.
-      await queryClient.invalidateQueries({ queryKey: keys.matters(orgId) })
+      void queryClient.invalidateQueries({ queryKey: keys.matters(orgId) })
     },
   })
 }
