@@ -88,6 +88,8 @@ export function useReviewClause(documentId: string) {
       // Roll back only this clause, so other reviews still in flight keep their changes.
       if (context?.previous) setReview(clauseId, context.previous)
     },
+    // Not awaited: the mutation would stay pending until the refetch finished, which would
+    // hold back the error message after a rollback.
     onSettled: () => {
       // With several reviews in flight, refetch once after the last one, so an earlier
       // response can't overwrite a later optimistic change.
