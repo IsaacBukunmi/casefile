@@ -1,6 +1,7 @@
 import type { paths } from '@casefile/api-types'
 import { setupServer } from 'msw/node'
 import { createOpenApiHttp } from 'openapi-msw'
+import type { Matter } from '@/api/types'
 import { buildApiError, buildClause, buildDocument, buildMatter } from './fixtures'
 
 // Handlers are typed from the OpenAPI schema: a wrong path, parameter or response body
@@ -13,12 +14,31 @@ const matters = [
   buildMatter({ id: 'mat_3', name: 'Brightwater – Office lease renewal', status: 'closed' }),
 ]
 
+// Slices a list the way the API pages it: ?page= and ?page_size=, defaulting to 1 and 10.
+export function pageOf(
+  items: Matter[],
+  query: { get: (name: 'page' | 'page_size') => string | null },
+) {
+  const page = Number(query.get('page') ?? 1)
+  const pageSize = Number(query.get('page_size') ?? 10)
+  const start = (page - 1) * pageSize
+  return {
+    items: items.slice(start, start + pageSize),
+    total: items.length,
+    page,
+    page_size: pageSize,
+  }
+}
+
 // A small, happy-path API. Tests override individual endpoints with server.use(...).
 export const handlers = [
   http.get('/matters', ({ query, response }) => {
     const status = query.get('status')
-    const items = status ? matters.filter((matter) => matter.status === status) : matters
-    return response(200).json({ items, total: items.length, page: 1, page_size: 10 })
+    const area = query.get('practice_area')
+    const matching = matters.filter(
+      (matter) => (!status || matter.status === status) && (!area || matter.practice_area === area),
+    )
+    return response(200).json(pageOf(matching, query))
   }),
   http.get('/matters/{matter_id}', ({ params, response }) => {
     const matter = matters.find((m) => m.id === params.matter_id)

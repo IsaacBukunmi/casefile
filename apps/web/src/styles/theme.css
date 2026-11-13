@@ -77,6 +77,15 @@
   --color-cite-hl: rgba(59, 78, 234, 0.12);
   --color-cite-ring: rgba(59, 78, 234, 0.55);
   --color-scrim: rgba(18, 22, 33, 0.4);
+  /* Avatars: four tones, picked per person (see lib/people.ts). Not a risk signal. */
+  --color-avatar-1-bg: var(--color-blue-100);
+  --color-avatar-1-fg: var(--color-blue-700);
+  --color-avatar-2-bg: var(--color-risk-low-bg);
+  --color-avatar-2-fg: var(--color-risk-low);
+  --color-avatar-3-bg: var(--color-risk-med-bg);
+  --color-avatar-3-fg: var(--color-risk-med);
+  --color-avatar-4-bg: var(--color-risk-high-bg);
+  --color-avatar-4-fg: var(--color-risk-high);
   /* Fonts */
   --font-display: 'Urbanist', system-ui, sans-serif;
   --font-ui: 'Geist', system-ui, sans-serif;
@@ -157,6 +166,19 @@
     to {
       opacity: 1;
       transform: none;
+    }
+  }
+  /* Screens rise in as they open, a little slower than menus. */
+  --animate-screen-in: menu-in 220ms var(--ease-out);
+  /* Skeleton placeholders pulse while content loads (the prototype's cfShimmer). */
+  --animate-shimmer: shimmer 1.2s ease-in-out infinite;
+  @keyframes shimmer {
+    0%,
+    100% {
+      opacity: 0.55;
+    }
+    50% {
+      opacity: 1;
     }
   }
   /* Display type: the wordmark's tight tracking. */

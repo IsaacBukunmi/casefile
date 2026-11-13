@@ -99,7 +99,7 @@ describe('AppShell', () => {
         }),
       )
       const { user, router } = renderApp('/matters')
-      await screen.findByText('0 matters')
+      await screen.findByText('No matters yet')
 
       await user.type(searchBox(), 'acme')
 

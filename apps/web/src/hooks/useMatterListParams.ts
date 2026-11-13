@@ -7,21 +7,16 @@ import type {
   PracticeArea,
   SortOrder,
 } from '@/api/types'
+import { matterStatusLabels, practiceAreaLabels } from '@/lib/labels'
 
-// Record<Union, true> fails to compile if the API adds a value we haven't listed here.
-function oneOf<T extends string>(values: Record<T, true>) {
+// A Record over the union fails to compile if the API adds a value we haven't listed.
+function oneOf<T extends string>(values: Record<T, unknown>) {
   return (value: string): value is T => Object.hasOwn(values, value)
 }
 
-export const isMatterStatus = oneOf<MatterStatus>({ open: true, in_review: true, closed: true })
-const isPracticeArea = oneOf<PracticeArea>({
-  commercial: true,
-  employment: true,
-  real_estate: true,
-  technology: true,
-  corporate: true,
-  privacy: true,
-})
+// Statuses and practice areas are checked against their label records, the one list of values.
+export const isMatterStatus = oneOf<MatterStatus>(matterStatusLabels)
+export const isPracticeArea = oneOf<PracticeArea>(practiceAreaLabels)
 const isSort = oneOf<MatterSort>({ name: true, client: true, status: true, last_activity: true })
 const isOrder = oneOf<SortOrder>({ asc: true, desc: true })
 
