@@ -11,7 +11,12 @@ export function setTokenGetter(getter: TokenGetter | null) {
   getToken = getter
 }
 
-export const api = createClient<paths>({ baseUrl: import.meta.env.VITE_API_URL })
+export const api = createClient<paths>({
+  baseUrl: import.meta.env.VITE_API_URL,
+  // Look fetch up on every request. By default the client keeps the fetch that existed when this
+  // module loaded, so anything that wraps fetch later (MSW in tests, monitoring tools) is skipped.
+  fetch: (request) => globalThis.fetch(request),
+})
 
 api.use({
   async onRequest({ request }) {

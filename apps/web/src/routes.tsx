@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router'
+import { Navigate, type RouteObject } from 'react-router'
 import { AppShell } from '@/app/AppShell'
 import { ProtectedLayout } from '@/app/ProtectedLayout'
 import { RootLayout } from '@/app/RootLayout'
@@ -9,7 +9,7 @@ import { MattersPage } from '@/pages/MattersPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { SignInPage } from '@/pages/SignInPage'
 
-export const router = createBrowserRouter([
+export const routes: RouteObject[] = [
   {
     Component: RootLayout,
     // Last resort: catches anything that breaks the root itself, so it can't use Clerk.
@@ -41,4 +41,4 @@ export const router = createBrowserRouter([
       },
     ],
   },
-])
+]
