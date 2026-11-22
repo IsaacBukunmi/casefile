@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           working-directory: apps/api
           enable-cache: true
@@ -85,7 +85,7 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
-      - uses: astral-sh/setup-uv@v10.3.3
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           working-directory: apps/api
           enable-cache: true
